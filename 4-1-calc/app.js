@@ -20,4 +20,4 @@ if (!Object.keys(operations).includes(operation)) {
 }
 
 const result = operations[operation](a, b);
-console.log(`Result is ${result}`);
+result && console.log(`Result is ${result}`);
