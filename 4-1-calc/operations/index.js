@@ -10,6 +10,7 @@ const convertedNumbers = (a, b) => {
     return [numA, numB];
   } else {
     console.error("Error: Invalid input. Values must be numbers.");
+    return [];
   }
 };
 
