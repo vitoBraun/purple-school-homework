@@ -1,3 +1,7 @@
+const operations = require("../4-1-calc/operations");
+
+console.dir(operations);
+
 const EventEmitter = require("events");
 const myEmitter = new EventEmitter();
 

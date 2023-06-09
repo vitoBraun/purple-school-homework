@@ -3,21 +3,18 @@ const {
   multiply,
   divide,
   subtract,
-  convertedNumbers,
+  validateAndConvertNumbers,
+  validateOperations,
 } = require("./operations/index.js");
 
 const [, , firstNum, secondNum, operation] = process.argv;
 
-const [a, b] = convertedNumbers(firstNum, secondNum);
+const [a, b] = validateAndConvertNumbers(firstNum, secondNum);
 
-const operations = { add, multiply, divide, subtract };
-
-if (!Object.keys(operations).includes(operation)) {
-  console.log(
-    "Error: Not existed operation! use add, multiply, divide, subtract"
-  );
-  return;
-}
+const operations = validateOperations(
+  { add, multiply, divide, subtract },
+  operation
+);
 
 const result = operations[operation](a, b);
 result && console.log(`Result is ${result}`);
