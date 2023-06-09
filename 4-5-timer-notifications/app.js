@@ -2,26 +2,13 @@
 const notifier = require("node-notifier");
 const timeString = process.argv[2];
 
-console.log(
-  `Time in milliseconds ${parseTimeString(timeString)}. Waiting for call...`
-);
+const parseTimeString = require("../4-3-timer/utils");
 
-function parseTimeString(timeString) {
-  const regex = /(\d+)h\s*(\d+)m\s*(\d+)s/;
-  const match = timeString.match(regex);
+const time = parseTimeString(timeString);
 
-  if (!match) {
-    throw new Error("Invalid time string format");
-  }
+console.log(`Time in milliseconds ${time}. Waiting for call...`);
 
-  const hours = parseInt(match[1], 10);
-  const minutes = parseInt(match[2], 10);
-  const seconds = parseInt(match[3], 10);
-
-  const totalMilliseconds = (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
-
-  return totalMilliseconds;
-}
+setTimeout(notify, time);
 
 function notify() {
   notifier.notify({
@@ -29,5 +16,3 @@ function notify() {
     message: "Hello, world!",
   });
 }
-
-setTimeout(notify, parseTimeString(timeString));
