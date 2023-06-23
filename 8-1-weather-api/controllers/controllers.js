@@ -11,7 +11,7 @@ import {
   getKeyFromStorage,
 } from "../services/storage-service.js";
 
-export const saveCity = async (city) => {
+const saveCity = async (city) => {
   if (!city.length) {
     printError(`City has not been passed`);
     return;
@@ -24,7 +24,7 @@ export const saveCity = async (city) => {
   }
 };
 
-export const getForecast = async (city) => {
+const getForecast = async (city) => {
   try {
     const weather = await getWeather(
       city || (await getKeyFromStorage(TOKEN_DICTIONARY.city))
@@ -38,5 +38,31 @@ export const getForecast = async (city) => {
     } else {
       printError(error.message);
     }
+  }
+};
+
+export const getWeatherController = async (req, res) => {
+  try {
+    const city = await getKeyFromStorage("city");
+    const forecast = await getForecast(city);
+    res.send(forecast);
+  } catch (error) {
+    res.status(400).send("No data about city, save it first");
+  }
+};
+
+export const getWeatherByCityController = async (req, res) => {
+  const city = req.params.city;
+  const forecast = await getForecast(city);
+  res.send(forecast);
+};
+
+export const saveCityController = async (req, res) => {
+  const city = req.body.city;
+  try {
+    await saveCity(city);
+    res.status(200).send("Город сохранен");
+  } catch (error) {
+    res.status(500).send("Не удалось сохранить город");
   }
 };

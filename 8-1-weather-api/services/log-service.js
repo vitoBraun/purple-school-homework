@@ -1,14 +1,14 @@
 import chalk from "chalk";
 
-const printError = (errorMsg) => {
+export const printError = (errorMsg) => {
   console.log(chalk.bgRed(`ERROR: ${errorMsg}`));
 };
 
-const printSuccess = (msg) => {
+export const printSuccess = (msg) => {
   console.log(chalk.bgGreen(`SUCCESS: ${msg}`));
 };
 
-const printHelp = () => {
+export const printHelp = () => {
   console.log(
     chalk.bgCyan(`Theese are commands:
     -h              Shows help information
@@ -35,5 +35,3 @@ export const decorateResponse = (res) => {
   Температура возуха аж ${res.main.temp} гр.Ц
   Если посмотреть в окно,то там ${res.weather[0].description}, ко всему этому влажность примерно  ${res.main.humidity} %`;
 };
-
-export { printError, printSuccess, printHelp };
