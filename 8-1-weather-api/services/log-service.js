@@ -30,4 +30,10 @@ export const printWeather = (res) => {
   );
 };
 
+export const decorateResponse = (res) => {
+  return `В горооде ${res.name} хорошая погода.
+  Температура возуха аж ${res.main.temp} гр.Ц
+  Если посмотреть в окно,то там ${res.weather[0].description}, ко всему этому влажность примерно  ${res.main.humidity} %`;
+};
+
 export { printError, printSuccess, printHelp };
