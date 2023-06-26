@@ -1,6 +1,8 @@
 import prisma from "./prisma.service.js";
 import bcrypt from "bcrypt";
-const NONCE = 2.5;
+const NONCE = process.env.NONCE;
+console.log(NONCE);
+
 export const registerUserService = async (name, email, password) => {
   const exisitngUser = await prisma.user.findUnique({
     where: {
