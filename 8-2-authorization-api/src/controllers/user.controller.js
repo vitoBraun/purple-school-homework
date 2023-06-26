@@ -1,12 +1,9 @@
-import {
-  registerUserService,
-  loginUserService,
-} from "../services/user.service.js";
+import { verifyUser, createUser } from "../services/user.service.js";
 import jwt from "jsonwebtoken";
 
 export const userRegisterController = async (req, res) => {
   const { name, email, password } = req.body;
-  await registerUserService(name, email, password)
+  await createUser(name, email, password)
     .then((user) => {
       res.status(201).send({ message: "User registered successfully", user });
     })
@@ -20,7 +17,7 @@ export const userRegisterController = async (req, res) => {
 
 export const userLoginController = async (req, res) => {
   const { email, password } = req.body;
-  await loginUserService(email, password)
+  await verifyUser(email, password)
     .then(async (user) => {
       const token = await jwt.sign({ email }, process.env.JWT_SECRET);
       res.status(201).send({ message: "Logged in successfully", token });

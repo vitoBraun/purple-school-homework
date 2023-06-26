@@ -3,7 +3,7 @@ import pkg from "bcryptjs";
 const { hash, compare } = pkg;
 const NONCE = process.env.NONCE;
 
-export const registerUserService = async (name, email, password) => {
+export const createUser = async (name, email, password) => {
   const exisitngUser = await prisma.user.findUnique({
     where: {
       email: email,
@@ -26,7 +26,7 @@ export const registerUserService = async (name, email, password) => {
   });
 };
 
-export const loginUserService = async (email, password) => {
+export const verifyUser = async (email, password) => {
   const exisitngUser = await prisma.user.findUnique({
     where: {
       email: email,

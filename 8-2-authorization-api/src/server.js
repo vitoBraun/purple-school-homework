@@ -6,15 +6,16 @@ import bodyParser from "body-parser";
 dotenv.config();
 
 const PORT = process.env.PORT || 8081;
-const app = express();
-prisma
-  .$connect()
-  .then(appInit)
-  .catch((err) => {
-    console.log("Could not connect to Prisma ", err);
-  });
 
-async function appInit() {
+export const app = express();
+export async function appInit() {
+  await prisma
+    .$connect()
+    .then(console.log("Connected to database"))
+    .catch((err) => {
+      console.log("Could not connect to Prisma ", err);
+    });
+
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(userRouter);
@@ -23,3 +24,5 @@ async function appInit() {
     console.log("listening on port " + PORT);
   });
 }
+
+appInit();

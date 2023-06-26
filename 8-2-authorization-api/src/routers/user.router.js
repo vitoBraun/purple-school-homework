@@ -9,7 +9,7 @@ import { auth } from "../middleware/auth.middleware.js";
 
 const userRouter = new Router();
 
-const baseUrl = "/user";
+const baseUrl = "/api/user";
 
 userRouter.post(`${baseUrl}/register`, userRegisterController);
 
