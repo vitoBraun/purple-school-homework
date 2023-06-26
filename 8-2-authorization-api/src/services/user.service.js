@@ -1,5 +1,6 @@
 import prisma from "./prisma.service.js";
-
+import bcrypt from "bcrypt";
+const NONCE = 2.5;
 export const registerUserService = async (name, email, password) => {
   const exisitngUser = await prisma.user.findUnique({
     where: {
@@ -12,11 +13,13 @@ export const registerUserService = async (name, email, password) => {
     );
   }
 
+  const passwordHash = bcrypt.hashSync(password, NONCE);
+
   return prisma.user.create({
     data: {
       name,
       email,
-      password,
+      password: passwordHash,
     },
   });
 };
