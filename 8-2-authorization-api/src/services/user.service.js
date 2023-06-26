@@ -33,8 +33,6 @@ export const loginUserService = async (email, password) => {
     },
   });
 
-  const passwordHash = await hash(password, Number(NONCE));
-
   return new Promise(async (resolve, reject) => {
     if (!exisitngUser) {
       reject(`User ${email} not found`);

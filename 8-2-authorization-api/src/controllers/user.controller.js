@@ -2,6 +2,7 @@ import {
   registerUserService,
   loginUserService,
 } from "../services/user.service.js";
+import jwt from "jsonwebtoken";
 
 export const userRegisterController = async (req, res) => {
   const { name, email, password } = req.body;
@@ -20,8 +21,9 @@ export const userRegisterController = async (req, res) => {
 export const userLoginController = async (req, res) => {
   const { email, password } = req.body;
   await loginUserService(email, password)
-    .then((user) => {
-      res.status(201).send({ message: "Logged in successfully", user });
+    .then(async (user) => {
+      const token = await jwt.sign({ email }, process.env.JWT_SECRET);
+      res.status(201).send({ message: "Logged in successfully", token });
     })
     .catch((error) => {
       res.status(500).send({
@@ -29,4 +31,8 @@ export const userLoginController = async (req, res) => {
         error,
       });
     });
+};
+
+export const userGetInfoController = async (req, res) => {
+  return res.status(200).send("ok");
 };
