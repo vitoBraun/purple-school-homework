@@ -1,7 +1,7 @@
 import prisma from "./prisma.service.js";
-import bcrypt from "bcrypt";
+import pkg from "bcryptjs";
+const { hash, compare } = pkg;
 const NONCE = process.env.NONCE;
-console.log(NONCE);
 
 export const registerUserService = async (name, email, password) => {
   const exisitngUser = await prisma.user.findUnique({
@@ -15,7 +15,7 @@ export const registerUserService = async (name, email, password) => {
     );
   }
 
-  const passwordHash = await bcrypt.hash(password, NONCE);
+  const passwordHash = await hash(password, Number(NONCE));
 
   return prisma.user.create({
     data: {
@@ -23,5 +23,25 @@ export const registerUserService = async (name, email, password) => {
       email,
       password: passwordHash,
     },
+  });
+};
+
+export const loginUserService = async (email, password) => {
+  const exisitngUser = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+
+  const passwordHash = await hash(password, Number(NONCE));
+
+  return new Promise(async (resolve, reject) => {
+    if (!exisitngUser) {
+      reject(`User ${email} not found`);
+    }
+    if (!(await compare(password, exisitngUser.password))) {
+      reject(`Credentials are incorrect`);
+    }
+    resolve(exisitngUser);
   });
 };
