@@ -13,7 +13,7 @@ export const registerUserService = async (name, email, password) => {
     );
   }
 
-  const passwordHash = bcrypt.hashSync(password, NONCE);
+  const passwordHash = await bcrypt.hash(password, NONCE);
 
   return prisma.user.create({
     data: {
