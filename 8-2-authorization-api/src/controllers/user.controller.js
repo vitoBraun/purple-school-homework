@@ -20,7 +20,7 @@ export const userLoginController = async (req, res) => {
   await verifyUser(email, password)
     .then(async (user) => {
       const token = await jwt.sign({ email }, process.env.JWT_SECRET);
-      res.status(201).send({ message: "Logged in successfully", token });
+      res.status(200).send({ message: "Logged in successfully", token });
     })
     .catch((error) => {
       res.status(500).send({

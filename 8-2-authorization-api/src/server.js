@@ -7,9 +7,9 @@ dotenv.config();
 
 const PORT = process.env.PORT || 8081;
 
-export const app = express();
-export async function appInit() {
-  await prisma
+const app = express();
+export function appInit() {
+  prisma
     .$connect()
     .then(console.log("Connected to database"))
     .catch((err) => {
@@ -20,9 +20,10 @@ export async function appInit() {
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(userRouter);
 
-  await app.listen(PORT, () => {
+  app.listen(PORT, () => {
     console.log("listening on port " + PORT);
   });
 }
 
 appInit();
+export default app;
