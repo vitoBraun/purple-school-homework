@@ -1,29 +1,6 @@
-<h2>API Авторизации</h2>
+Content of .env file:
 
-Для установки проекта используйте команду
-
-```
-npm install
-```
-
-Перед запуском проекта создайте файл <b>.env</b> в корневом каталоге. Он должен
-содержать следующие переменные:
-
-<ul>
-<li><b>DATABASE_URL</b> - строка подключения к базе данных типа 'postgres://name:password@localhost:5432/dbname'</li>
-<li><b>PORT</b> - Номер порта, на котором будет запущено приложение (например 8081)</li>
-<li><b>JWT_SECRET</b> - Секретная строка произвольного содержания для валидации JWT Токена </li>
-<li><b>NONCE</b> - Секретный код произвольного содержания для хэширования пароля пользователя </li>
-</ul>
-
-После чего можно запустить с помощью команды
-
-```
-npm start
-```
-
-Чтобы протестировать роуты, используйте
-
-```
-npm run test
-```
+SALT=[small secret number for generating password hashes]
+DATABASE_URL=[Postgress database connection string]
+PORT=[Specific port for app usage]
+JWT_SECRET=[Secret for Jwt]
