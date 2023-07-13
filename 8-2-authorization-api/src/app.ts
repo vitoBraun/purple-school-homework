@@ -3,7 +3,7 @@ import { ILogger } from './logger/logger.interface';
 import express, { Express } from 'express';
 import { Server } from 'http';
 import { inject, injectable } from 'inversify';
-import { TYPES } from './users/types';
+import { TYPES } from './users/types/types';
 import 'reflect-metadata';
 import { json } from 'body-parser';
 import { IConfigService } from './config/config.service.interface';
@@ -25,13 +25,9 @@ export class App {
 		@inject(TYPES.ExecptionFilter) private exeptionFilter: IExeptionFilter,
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.PrismaService) private prismaService: PrismaService,
-		@inject(TYPES.UsersRepository) private usersRepository: UsersRepository,
 	) {
 		this.app = express();
 		this.port = Number(this.configService.get('PORT')) || 8000;
-		this.logger = logger;
-		this.userController = userController;
-		this.exeptionFilter = exeptionFilter;
 	}
 
 	useMiddleware(): void {

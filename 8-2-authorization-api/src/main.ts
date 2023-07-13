@@ -3,17 +3,17 @@ import { App } from './app';
 import { ExecptionFilter } from './errors/exeption.filter';
 import { LoggerService } from './logger/logger.service';
 import { ILogger } from './logger/logger.interface';
-import { TYPES } from './users/types';
+import { TYPES } from './users/types/types';
 import { UserController } from './users/users.controller';
 import { IExeptionFilter } from './errors/exeption.filter.interface';
-import { IUserController } from './users/users.controller.interface';
+import { IUserController } from './users/types/users.controller.interface';
 import { UserService } from './users/users.sevice';
-import { IUserService } from './users/users.sevice.interface';
+import { IUserService } from './users/types/users.sevice.interface';
 import { IConfigService } from './config/config.service.interface';
 import { ConfigService } from './config/config.service';
 import { PrismaService } from './database/prisma.service';
 import { UsersRepository } from './users/users.repository';
-import { IUsersRepository } from './users/users.repository.interface';
+import { IUsersRepository } from './users/types/users.repository.interface';
 
 export interface IBootsrapReturn {
 	appContainer: Container;
