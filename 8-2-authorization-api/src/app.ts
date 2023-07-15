@@ -11,6 +11,7 @@ import { IConfigService } from './config/config.service.interface';
 import { IExeptionFilter } from './errors/exeption.filter.interface';
 import { UserController } from './users/users.controller';
 import { PrismaService } from './database/prisma.service';
+import { ItemsController } from './items/items.controller';
 
 @injectable()
 export class App {
@@ -25,6 +26,7 @@ export class App {
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.PrismaService) private prismaService: PrismaService,
 		@inject(TYPES.PromoController) private promoController: PromoController,
+		@inject(TYPES.ItemsController) private itemsController: ItemsController,
 	) {
 		this.app = express();
 		this.port = Number(this.configService.get('PORT')) || 8000;
@@ -39,6 +41,7 @@ export class App {
 	useRoutes(): void {
 		this.app.use('/users', this.userController.router);
 		this.app.use('/promo', this.promoController.router);
+		this.app.use('/items', this.itemsController.router);
 	}
 
 	useExeptionFilters(): void {

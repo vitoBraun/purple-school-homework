@@ -1,4 +1,4 @@
-import { MaxLength, IsString, IsNumber, IsEmail, IsOptional } from 'class-validator';
+import { MaxLength, IsString, IsNumber } from 'class-validator';
 
 export class CreatePromoDto {
 	@MaxLength(100)

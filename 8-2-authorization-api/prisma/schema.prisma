@@ -25,3 +25,30 @@ model PromoModel {
   creatorId    Int
   status       String    @default("new")
 }
+
+model ItemModel {
+  id           Int             @id @default(autoincrement())
+  name         String
+  description  String
+  price        Int
+  storeCount   Int             @default(0)
+  categories   CategoryModel[]
+  ItemCategory ItemCategory[]
+}
+
+model CategoryModel {
+  id           Int            @id @default(autoincrement())
+  name         String
+  items        ItemModel[]
+  ItemCategory ItemCategory[]
+}
+
+model ItemCategory {
+  itemId     Int
+  categoryId Int
+
+  item     ItemModel     @relation(fields: [itemId], references: [id])
+  category CategoryModel @relation(fields: [categoryId], references: [id])
+
+  @@unique([itemId, categoryId])
+}

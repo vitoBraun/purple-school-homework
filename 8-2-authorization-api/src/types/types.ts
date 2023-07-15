@@ -10,6 +10,10 @@ export const TYPES = {
 	PromoRepository: Symbol.for('PromoRepository'),
 	PromoController: Symbol.for('PromoController'),
 	PromoService: Symbol.for('PromoService'),
+	ItemsService: Symbol.for('ItemsService'),
+	ItemsRepository: Symbol.for('ItemsRepository'),
+	ItemsController: Symbol.for('ItemsController'),
 };
 
 export type Status = 'new' | 'published' | 'declined';
+export type Roles = 'admin' | 'provider' | 'storeManager' | 'storeAdministrator';
