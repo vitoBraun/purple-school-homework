@@ -20,6 +20,8 @@ model PromoModel {
   id           Int       @id @default(autoincrement())
   title        String
   description  String
-  creator      UserModel @relation(fields: [creatorEmail], references: [email])
-  creatorEmail String
+  creationDate DateTime  @default(now())
+  creator      UserModel @relation(fields: [creatorId], references: [id])
+  creatorId    Int
+  status       String    @default("new")
 }

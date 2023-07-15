@@ -1,4 +1,4 @@
-import { MaxLength, IsString, IsNumber, IsEmail } from 'class-validator';
+import { MaxLength, IsString, IsNumber, IsEmail, IsOptional } from 'class-validator';
 
 export class CreatePromoDto {
 	@MaxLength(100)
@@ -6,9 +6,6 @@ export class CreatePromoDto {
 
 	@IsString()
 	description: string;
-
-	@IsEmail()
-	creatorEmail: string;
 }
 
 export class EditPromoDto {

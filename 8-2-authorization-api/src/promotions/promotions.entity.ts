@@ -1,9 +1,10 @@
+import { Status } from '../types/types';
+
 export class Promo {
-	constructor(
-		private readonly _title: string,
-		private readonly _description: string,
-		private readonly _creatorEmail: string,
-	) {}
+	private _creatorId: number;
+	private _status: Status = 'new';
+
+	constructor(private readonly _title: string, private readonly _description: string) {}
 	get title(): string {
 		return this._title;
 	}
@@ -12,7 +13,10 @@ export class Promo {
 		return this._description;
 	}
 
-	get creatorEmail(): string {
-		return this._creatorEmail;
+	get creatorId(): number {
+		return this._creatorId;
+	}
+	get status(): Status {
+		return this._status;
 	}
 }

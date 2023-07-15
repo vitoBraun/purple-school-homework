@@ -1,4 +1,3 @@
-import { PromoRepository } from './../promotions/promotions.repository';
 export const TYPES = {
 	Application: Symbol.for('Application'),
 	ILogger: Symbol.for('ILogger'),
@@ -12,3 +11,5 @@ export const TYPES = {
 	PromoController: Symbol.for('PromoController'),
 	PromoService: Symbol.for('PromoService'),
 };
+
+export type Status = 'new' | 'published' | 'declined';

@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 import { PromoModel, UserModel } from '@prisma/client';
 import { IConfigService } from '../config/config.service.interface';
 import { IPromoRepository } from './types/promotions.repository.interface';
-import { TYPES } from '../types/types';
+import { Status, TYPES } from '../types/types';
 import { IPromoService } from './types/promotions.service.interface';
 import { Promo } from './promotions.entity';
 
@@ -16,14 +16,14 @@ export class PromoService implements IPromoService {
 	async createPromo({
 		title,
 		description,
-		creatorEmail,
+		user,
 	}: {
 		title: string;
 		description: string;
-		creatorEmail: string;
-	}): Promise<PromoModel> {
-		const newPromo = new Promo(title, description, creatorEmail);
-		return await this.promoRepository.create(newPromo);
+		user: string;
+	}): Promise<PromoModel | null> {
+		const newPromo = new Promo(title, description);
+		return await this.promoRepository.create(newPromo, user);
 	}
 
 	async editPromo({
@@ -48,8 +48,21 @@ export class PromoService implements IPromoService {
 		return deletedExistePromo;
 	}
 
-	async getPromoList(userEmail?: string): Promise<PromoModel[] | null> {
-		const list = await this.promoRepository.getList(userEmail && userEmail);
+	async getPromoList({
+		userEmail,
+		params,
+	}: {
+		userEmail?: string;
+		params?: Record<string, any>;
+	}): Promise<PromoModel[] | null> {
+		const list = await this.promoRepository.getList({ userEmail: userEmail, params });
 		return list;
+	}
+	async updatePromoStatus(id: number, status: Status): Promise<PromoModel | null> {
+		const existingPromo = await this.promoRepository.find(id);
+		if (!existingPromo) {
+			return null;
+		}
+		return await this.promoRepository.updateStatus(id, status);
 	}
 }

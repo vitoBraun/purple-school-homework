@@ -48,6 +48,12 @@ export class UserController extends BaseController implements IUserController {
 				middleware: [new AuthGuard()],
 			},
 			{
+				path: '/list',
+				method: 'get',
+				function: this.list,
+				middleware: [new AuthAdmin(this.userService)],
+			},
+			{
 				path: '/password',
 				method: 'post',
 				function: this.changePassword,
@@ -107,6 +113,11 @@ export class UserController extends BaseController implements IUserController {
 			return next(new HttpError(422, 'Incorrect data'));
 		}
 		const result = await this.userService.changeUserPassword(email, newPassword);
+		this.ok(res, result);
+	}
+
+	async list(req: Request, res: Response, next: NextFunction): Promise<void> {
+		const result = await this.userService.getUsersList();
 		this.ok(res, result);
 	}
 

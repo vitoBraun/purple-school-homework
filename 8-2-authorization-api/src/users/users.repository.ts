@@ -22,7 +22,16 @@ export class UsersRepository implements IUsersRepository {
 	async find(email: string): Promise<UserModel | null> {
 		return this.prismaService.client.userModel.findFirst({ where: { email } });
 	}
-	async delete(email: string): Promise<UserModel | null> {
+	async getList(): Promise<UserModel[] | null> {
+		return this.prismaService.client.userModel.findMany();
+	}
+	async delete(email: string | string[]): Promise<UserModel | null> {
+		if (Array.isArray(email)) {
+			await this.prismaService.client.userModel.deleteMany({
+				where: { email: { in: email } },
+			});
+			return null;
+		}
 		const existingUser = await this.prismaService.client.userModel.findFirst({ where: { email } });
 		if (!existingUser) {
 			return null;

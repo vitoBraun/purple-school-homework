@@ -52,7 +52,11 @@ export class UserService implements IUserService {
 		return this.usersRepository.find(email);
 	}
 
-	async deleteUser(email: string): Promise<UserModel | null> {
+	async getUsersList(): Promise<UserModel[] | null> {
+		return this.usersRepository.getList();
+	}
+
+	async deleteUser(email: string | string[]): Promise<UserModel | null> {
 		return this.usersRepository.delete(email);
 	}
 

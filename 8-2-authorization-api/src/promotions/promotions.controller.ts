@@ -3,17 +3,18 @@ import { BaseController } from '../common/base.controller';
 import 'reflect-metadata';
 
 import { inject, injectable } from 'inversify';
-import { TYPES } from '../types/types';
+import { Status, TYPES } from '../types/types';
 import { ILogger } from '../logger/logger.interface';
 
 import { IConfigService } from '../config/config.service.interface';
 
 import { IPromoController } from './types/promotions.controller.interface';
-import { AuthGuard } from '../common/auth.guard';
-import { CreatePromoDto, EditPromoDto } from './dto/promotion.dto';
+import { AuthAdmin, AuthGuard } from '../common/auth.guard';
+import { EditPromoDto } from './dto/promotion.dto';
 import { IPromoService } from './types/promotions.service.interface';
 import { HttpError } from '../errors/http-error.class';
-import { IUserService } from '../users/types/users.sevice.interface';
+import { UserService } from '../users/users.sevice';
+import { QueryOptions } from './types/promotions.types';
 
 @injectable()
 export class PromoController extends BaseController implements IPromoController {
@@ -21,7 +22,7 @@ export class PromoController extends BaseController implements IPromoController 
 		@inject(TYPES.ILogger) private loggerService: ILogger,
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.PromoService) private promoService: IPromoService,
-		@inject(TYPES.UserService) private userService: IUserService,
+		@inject(TYPES.UserService) private userService: UserService,
 	) {
 		super(loggerService);
 		this.bindRoutes([
@@ -38,6 +39,12 @@ export class PromoController extends BaseController implements IPromoController 
 				middleware: [new AuthGuard()],
 			},
 			{
+				path: '/status',
+				method: 'patch',
+				function: this.changeStatus,
+				middleware: [new AuthAdmin(this.userService)],
+			},
+			{
 				path: '/delete',
 				method: 'delete',
 				function: this.delete,
@@ -52,17 +59,16 @@ export class PromoController extends BaseController implements IPromoController 
 		]);
 	}
 
-	async create(
-		req: Request<{}, {}, CreatePromoDto>,
-		res: Response,
-		next: NextFunction,
-	): Promise<void> {
+	async create(req: Request, res: Response, next: NextFunction): Promise<void> {
 		const { user } = req;
 		const { title, description } = req.body;
 		if (!title || !description) {
 			return next(new HttpError(422, 'Incorrect data'));
 		}
-		const result = await this.promoService.createPromo({ title, description, creatorEmail: user });
+		const result = await this.promoService.createPromo({ title, description, user });
+		if (!result) {
+			return next(new HttpError(422, 'Creation failed!'));
+		}
 		this.created(res, result);
 	}
 
@@ -72,6 +78,22 @@ export class PromoController extends BaseController implements IPromoController 
 			return next(new HttpError(422, 'Incorrect data'));
 		}
 		const result = await this.promoService.editPromo(req.body);
+		this.ok(res, result);
+	}
+
+	async changeStatus(
+		req: Request<{}, {}, { id: number; status: Status }>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
+		const { id, status } = req.body;
+		if (!id || !status) {
+			return next(new HttpError(422, 'Incorrect data'));
+		}
+		const result = await this.promoService.updatePromoStatus(id, status);
+		if (!result) {
+			return next(new HttpError(404, 'Promo is not found'));
+		}
 		this.ok(res, result);
 	}
 
@@ -94,11 +116,23 @@ export class PromoController extends BaseController implements IPromoController 
 		this.send(res, 200, result);
 	}
 
-	async list(req: Request<{}, {}, { user: string }>, res: Response): Promise<void> {
+	async list(req: Request<QueryOptions, {}, { user: string }>, res: Response): Promise<void> {
 		const { user } = req;
 		const isAdmin = await this.userService.validateAdmin(user);
 
-		const result = await this.promoService.getPromoList(isAdmin ? undefined : user);
+		const query = req.query;
+		if (query) {
+			console.log(query);
+			const promosByStatus = await this.promoService.getPromoList({
+				params: query,
+				userEmail: isAdmin ? undefined : user,
+			});
+
+			this.ok(res, promosByStatus);
+			return;
+		}
+
+		const result = await this.promoService.getPromoList({ userEmail: isAdmin ? undefined : user });
 		this.ok(res, result);
 	}
 }
