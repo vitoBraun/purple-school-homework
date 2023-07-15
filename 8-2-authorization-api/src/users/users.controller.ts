@@ -13,6 +13,7 @@ import { sign } from 'jsonwebtoken';
 import { IConfigService } from '../config/config.service.interface';
 import { AuthAdmin, AuthGuard } from '../common/auth.guard';
 import { UserService } from './users.sevice';
+import { UsersRepository } from './users.repository';
 
 @injectable()
 export class UserController extends BaseController implements IUserController {
@@ -20,6 +21,7 @@ export class UserController extends BaseController implements IUserController {
 		@inject(TYPES.ILogger) private loggerService: ILogger,
 		@inject(TYPES.UserService) private userService: UserService,
 		@inject(TYPES.ConfigService) private configService: IConfigService,
+		@inject(TYPES.UsersRepository) private usersRepository: UsersRepository,
 	) {
 		super();
 		this.bindRoutes([

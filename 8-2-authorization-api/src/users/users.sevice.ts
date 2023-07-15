@@ -67,4 +67,11 @@ export class UserService implements IUserService {
 		}
 		return false;
 	}
+	async validateStoreAdmin(email: string): Promise<boolean> {
+		const existingUser = await this.usersRepository.find(email);
+		if (existingUser?.type === 'storeAdministrator') {
+			return true;
+		}
+		return false;
+	}
 }

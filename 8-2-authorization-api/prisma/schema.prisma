@@ -8,12 +8,13 @@ datasource db {
 }
 
 model UserModel {
-  id       Int          @id @default(autoincrement())
-  email    String       @unique
-  password String
-  name     String
-  type     String       @default("provider")
-  promos   PromoModel[]
+  id        Int          @id @default(autoincrement())
+  email     String       @unique
+  password  String
+  name      String
+  type      String       @default("provider")
+  promos    PromoModel[]
+  ItemModel ItemModel[]
 }
 
 model PromoModel {
@@ -32,6 +33,8 @@ model ItemModel {
   description  String
   price        Int
   storeCount   Int             @default(0)
+  creator      UserModel       @relation(fields: [creatorId], references: [id])
+  creatorId    Int             @default(0)
   categories   CategoryModel[]
   ItemCategory ItemCategory[]
 }

@@ -17,4 +17,4 @@ export const TYPES = {
 };
 
 export type Status = 'new' | 'published' | 'declined';
-export type Roles = 'admin' | 'provider' | 'storeManager' | 'storeAdministrator';
+export type Role = 'admin' | 'provider' | 'storeManager' | 'storeAdministrator';

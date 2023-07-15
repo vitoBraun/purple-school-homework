@@ -1,4 +1,5 @@
 import { IsEmail, IsOptional, IsString, MaxLength } from 'class-validator';
+import { Role } from '../../types/types';
 
 export class UserRegisterDto {
 	@MaxLength(100)
@@ -15,5 +16,5 @@ export class UserRegisterDto {
 
 	@IsOptional()
 	@IsString({ message: 'Incorrect type' })
-	type?: 'provider' | 'admin';
+	type?: Role;
 }

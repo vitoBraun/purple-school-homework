@@ -22,7 +22,8 @@ export class ItemsRepository implements IItemsRepository {
 			where: { name: { in: item.categories } },
 		});
 		if (categories.length === 0) {
-			throw new Error('Category not exist');
+			await this.createCategory(item.categories[0]);
+			throw new Error('Category not exist, and was created');
 		}
 
 		const newItem = await this.prismaService.client.itemModel.create({
