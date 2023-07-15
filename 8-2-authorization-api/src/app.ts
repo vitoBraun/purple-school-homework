@@ -1,17 +1,17 @@
+import { PromoController } from './promotions/promotions.controller';
 import { AuthMiddleware } from './common/auth.middleware';
 import { ILogger } from './logger/logger.interface';
 import express, { Express } from 'express';
 import { Server } from 'http';
 import { inject, injectable } from 'inversify';
-import { TYPES } from './users/types/types';
+import { TYPES } from './types/types';
 import 'reflect-metadata';
 import { json } from 'body-parser';
 import { IConfigService } from './config/config.service.interface';
 import { IExeptionFilter } from './errors/exeption.filter.interface';
 import { UserController } from './users/users.controller';
 import { PrismaService } from './database/prisma.service';
-
-import { UsersRepository } from './users/users.repository';
+import { IPromoController } from './promotions/types/promotions.controller.interface';
 
 @injectable()
 export class App {
@@ -25,6 +25,7 @@ export class App {
 		@inject(TYPES.ExecptionFilter) private exeptionFilter: IExeptionFilter,
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.PrismaService) private prismaService: PrismaService,
+		@inject(TYPES.PromoController) private promoController: PromoController,
 	) {
 		this.app = express();
 		this.port = Number(this.configService.get('PORT')) || 8000;
@@ -38,6 +39,7 @@ export class App {
 
 	useRoutes(): void {
 		this.app.use('/users', this.userController.router);
+		this.app.use('/promo', this.promoController.router);
 	}
 
 	useExeptionFilters(): void {

@@ -1,13 +1,11 @@
 import { inject, injectable } from 'inversify';
-import { UserLoginDto } from './dto/user-login.dto';
-import { UserRegisterDto } from './dto/user-regiter.dto';
 import { User } from './user.entity';
 import { IUserService } from './types/users.sevice.interface';
 import { IConfigService } from '../config/config.service.interface';
-import { TYPES } from './types/types';
+import { TYPES } from '../types/types';
 import { IUsersRepository } from './types/users.repository.interface';
 import { UserModel } from '@prisma/client';
-
+import jwt from 'jsonwebtoken';
 @injectable()
 export class UserService implements IUserService {
 	constructor(
@@ -18,12 +16,14 @@ export class UserService implements IUserService {
 		email,
 		name,
 		password,
+		type = 'provider',
 	}: {
 		email: string;
 		name: string;
 		password: string;
+		type?: string;
 	}): Promise<UserModel | null> {
-		const newUser = new User(email, name);
+		const newUser = new User(email, name, type);
 		const salt = await this.configService.get('SALT');
 		await newUser.setPassword(password, salt);
 		const existedUser = await this.usersRepository.find(email);
@@ -45,5 +45,11 @@ export class UserService implements IUserService {
 	}
 	async getUserInfo(email: string): Promise<UserModel | null> {
 		return this.usersRepository.find(email);
+	}
+
+	async getUserIdFromJWT(token: string): Promise<string | null> {
+		const decodedToken = await jwt.decode(token);
+		console.log(decodedToken);
+		return decodedToken as string;
 	}
 }

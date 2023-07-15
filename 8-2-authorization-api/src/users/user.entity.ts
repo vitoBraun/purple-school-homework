@@ -2,13 +2,21 @@ import { hash, compare } from 'bcryptjs';
 
 export class User {
 	private _password: string;
-	constructor(private readonly _email: string, private readonly _name: string) {}
+	constructor(
+		private readonly _email: string,
+		private readonly _name: string,
+		private readonly _type: string,
+	) {}
 	get email(): string {
 		return this._email;
 	}
 
 	get name(): string {
 		return this._name;
+	}
+
+	get type(): string {
+		return this._type;
 	}
 
 	get password(): string {

@@ -3,7 +3,7 @@ import { BaseController } from '../common/base.controller';
 import 'reflect-metadata';
 import { HttpError } from '../errors/http-error.class';
 import { inject, injectable } from 'inversify';
-import { TYPES } from './types/types';
+import { TYPES } from '../types/types';
 import { ILogger } from '../logger/logger.interface';
 import { IUserController } from './types/users.controller.interface';
 import { UserLoginDto } from './dto/user-login.dto';

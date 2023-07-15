@@ -3,14 +3,14 @@ import { UserModel } from '@prisma/client';
 import { User } from './user.entity';
 import { IUsersRepository } from './types/users.repository.interface';
 import { inject, injectable } from 'inversify';
-import { TYPES } from './types/types';
+import { TYPES } from '../types/types';
 
 @injectable()
 export class UsersRepository implements IUsersRepository {
 	constructor(@inject(TYPES.PrismaService) private prismaService: PrismaService) {}
-	async create({ email, password, name }: User): Promise<UserModel> {
+	async create({ email, password, name, type }: User): Promise<UserModel> {
 		return this.prismaService.client.userModel.create({
-			data: { email, password, name },
+			data: { email, password, name, type },
 		});
 	}
 	async find(email: string): Promise<UserModel | null> {

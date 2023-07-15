@@ -8,8 +8,18 @@ datasource db {
 }
 
 model UserModel {
-  id       Int    @id @default(autoincrement())
-  email    String
+  id       Int          @id @default(autoincrement())
+  email    String       @unique
   password String
   name     String
+  type     String       @default("provider")
+  promos   PromoModel[]
+}
+
+model PromoModel {
+  id           Int       @id @default(autoincrement())
+  title        String
+  description  String
+  creator      UserModel @relation(fields: [creatorEmail], references: [email])
+  creatorEmail String
 }
