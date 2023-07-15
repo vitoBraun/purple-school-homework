@@ -6,17 +6,23 @@ import { CategoryModel, ItemModel } from '@prisma/client';
 import { TYPES } from '../types/types';
 import { PrismaService } from '../database/prisma.service';
 import { CreateItemDto } from './dto/create-Item.dto';
+import { Request } from 'express';
+import { ItemsWithCategories } from './types/types';
+import { QueryFormatter } from '../common/query-formatter.middleware';
 
 @injectable()
 export class ItemsRepository implements IItemsRepository {
-	constructor(@inject(TYPES.PrismaService) private prismaService: PrismaService) {}
+	constructor(
+		@inject(TYPES.PrismaService) private prismaService: PrismaService,
+		@inject(TYPES.QueryFormatter) private queryFormatter: QueryFormatter,
+	) {}
 
-	async create(item: CreateItemDto): Promise<ItemModel | null> {
+	async create(item: CreateItemDto): Promise<ItemModel> {
 		const categories = await this.prismaService.client.categoryModel.findMany({
 			where: { name: { in: item.categories } },
 		});
 		if (categories.length === 0) {
-			return null;
+			throw new Error('Category not exist');
 		}
 
 		const newItem = await this.prismaService.client.itemModel.create({
@@ -27,11 +33,14 @@ export class ItemsRepository implements IItemsRepository {
 				storeCount: item.storeCount,
 				categories: { connect: categories.map((category) => ({ id: category.id })) },
 			},
+			include: {
+				categories: true,
+			},
 		});
 		return newItem;
 	}
 
-	async createCategory(name: string): Promise<CategoryModel | null> {
+	async createCategory(name: string): Promise<CategoryModel | never> {
 		const newItem = await this.prismaService.client.categoryModel.create({
 			data: {
 				name,
@@ -39,21 +48,13 @@ export class ItemsRepository implements IItemsRepository {
 		});
 		return newItem;
 	}
-	async getCategories(): Promise<CategoryModel[] | null> {
+	async getCategories(): Promise<CategoryModel[] | []> {
 		const categories = await this.prismaService.client.categoryModel.findMany();
 		return categories;
 	}
-	async getItems(category?: string): Promise<ItemModel[] | null> {
-		const query = {
-			where: {
-				categories: {
-					some: {
-						name: category,
-					},
-				},
-			},
-		};
-		const items = await this.prismaService.client.itemModel.findMany(category ? query : undefined);
+
+	async getItems(params: any): Promise<ItemsWithCategories[] | []> {
+		const items = await this.prismaService.client.itemModel.findMany(params);
 		return items;
 	}
 }

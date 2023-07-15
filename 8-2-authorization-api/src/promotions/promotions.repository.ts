@@ -5,11 +5,14 @@ import { inject, injectable } from 'inversify';
 import { Status, TYPES } from '../types/types';
 import { IPromoRepository } from './types/promotions.repository.interface';
 import { Promo } from './promotions.entity';
-import { resolveListQuery } from '../common/utils';
+import { QueryFormatter } from '../common/query-formatter.middleware';
 
 @injectable()
 export class PromoRepository implements IPromoRepository {
-	constructor(@inject(TYPES.PrismaService) private prismaService: PrismaService) {}
+	constructor(
+		@inject(TYPES.PrismaService) private prismaService: PrismaService,
+		@inject(TYPES.QueryFormatter) private queryFormatter: QueryFormatter,
+	) {}
 
 	async create({ title, description }: Promo, user: string): Promise<PromoModel | null> {
 		const creatorId = await this.getCreatorId(user);
@@ -49,20 +52,17 @@ export class PromoRepository implements IPromoRepository {
 		params,
 	}: {
 		userEmail?: string;
-		params?: Record<string, any>;
+		params: any;
 	}): Promise<PromoModel[] | null> {
-		const { filter, paggination, restParams } = resolveListQuery(params);
 		if (!userEmail) {
-			return this.prismaService.client.promoModel.findMany({ where: filter, ...paggination });
+			return this.prismaService.client.promoModel.findMany(params);
 		} else {
 			const creatorId = await this.getCreatorId(userEmail);
 			if (!creatorId) {
 				return null;
 			}
-			return this.prismaService.client.promoModel.findMany({
-				where: { creatorId, ...restParams },
-				...paggination,
-			});
+
+			return this.prismaService.client.promoModel.findMany(params);
 		}
 	}
 	async find(id: number, email?: string): Promise<PromoModel | null> {

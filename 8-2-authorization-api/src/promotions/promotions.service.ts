@@ -6,12 +6,14 @@ import { IPromoRepository } from './types/promotions.repository.interface';
 import { Status, TYPES } from '../types/types';
 import { IPromoService } from './types/promotions.service.interface';
 import { Promo } from './promotions.entity';
+import { QueryFormatter } from '../common/query-formatter.middleware';
 
 @injectable()
 export class PromoService implements IPromoService {
 	constructor(
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.PromoRepository) private promoRepository: IPromoRepository,
+		@inject(TYPES.QueryFormatter) private queryFormatter: QueryFormatter,
 	) {}
 	async createPromo({
 		title,
@@ -53,9 +55,9 @@ export class PromoService implements IPromoService {
 		params,
 	}: {
 		userEmail?: string;
-		params?: Record<string, any>;
+		params: Record<string, any>;
 	}): Promise<PromoModel[] | null> {
-		const list = await this.promoRepository.getList({ userEmail: userEmail, params });
+		const list = await this.promoRepository.getList({ params, userEmail });
 		return list;
 	}
 	async updatePromoStatus(id: number, status: Status): Promise<PromoModel | null> {

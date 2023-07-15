@@ -13,7 +13,8 @@ import { IItemsController } from './types/items.controller.interface';
 import { UserService } from '../users/users.sevice';
 import { CreateItemDto } from './dto/create-Item.dto';
 
-import { HttpError } from '../errors/http-error.class';
+import { ExecptionFilter } from '../errors/exeption.filter';
+import { QueryFormatter } from '../common/query-formatter.middleware';
 
 @injectable()
 export class ItemsController extends BaseController implements IItemsController {
@@ -22,6 +23,7 @@ export class ItemsController extends BaseController implements IItemsController 
 		@inject(TYPES.UserService) private userService: UserService,
 		@inject(TYPES.ItemsService) private itemsService: ItemsService,
 		@inject(TYPES.ConfigService) private configService: IConfigService,
+		@inject(TYPES.ExecptionFilter) private exeptionFilter: ExecptionFilter,
 	) {
 		super(loggerService);
 		this.bindRoutes([
@@ -47,18 +49,19 @@ export class ItemsController extends BaseController implements IItemsController 
 				path: '/list',
 				method: 'get',
 				function: this.getItems,
-				middleware: [],
+				middleware: [new QueryFormatter()],
 			},
 		]);
 	}
 
 	async create(req: Request, res: Response, next: NextFunction): Promise<void> {
-		const item: CreateItemDto = req.body;
-		const result = await this.itemsService.createItem(item);
-		if (!result) {
-			return next(new HttpError(500, 'Could not add item', 'login'));
+		try {
+			const item: CreateItemDto = req.body;
+			const result = await this.itemsService.createItem(item);
+			this.ok(res, result);
+		} catch (error: any) {
+			this.exeptionFilter.catch(error, req, res, next);
 		}
-		this.ok(res, result);
 	}
 	async createCategory(req: Request, res: Response, next: NextFunction): Promise<void> {
 		const { name } = req.body;
@@ -70,8 +73,8 @@ export class ItemsController extends BaseController implements IItemsController 
 		this.ok(res, result);
 	}
 	async getItems(req: Request, res: Response, next: NextFunction): Promise<void> {
-		const { category } = req.query;
-		const result = await this.itemsService.getItems(category as string);
+		const params = req.query;
+		const result = await this.itemsService.getItems(params);
 		this.ok(res, result);
 	}
 }

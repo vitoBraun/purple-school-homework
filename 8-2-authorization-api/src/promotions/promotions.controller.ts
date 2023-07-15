@@ -15,6 +15,7 @@ import { IPromoService } from './types/promotions.service.interface';
 import { HttpError } from '../errors/http-error.class';
 import { UserService } from '../users/users.sevice';
 import { QueryOptions } from './types/promotions.types';
+import { QueryFormatter } from '../common/query-formatter.middleware';
 
 @injectable()
 export class PromoController extends BaseController implements IPromoController {
@@ -23,6 +24,7 @@ export class PromoController extends BaseController implements IPromoController 
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.PromoService) private promoService: IPromoService,
 		@inject(TYPES.UserService) private userService: UserService,
+		@inject(TYPES.QueryFormatter) private queryFormatter: QueryFormatter,
 	) {
 		super(loggerService);
 		this.bindRoutes([
@@ -54,7 +56,7 @@ export class PromoController extends BaseController implements IPromoController 
 				path: '/list',
 				method: 'get',
 				function: this.list,
-				middleware: [new AuthGuard()],
+				middleware: [new QueryFormatter(), new AuthGuard()],
 			},
 		]);
 	}
@@ -121,19 +123,10 @@ export class PromoController extends BaseController implements IPromoController 
 		const isAdmin = await this.userService.validateAdmin(user);
 		const emailCondition = isAdmin ? undefined : user;
 
-		const query = req.query;
-
-		if (query) {
-			const promosByStatus = await this.promoService.getPromoList({
-				params: { status: 'published', ...query },
-				userEmail: emailCondition,
-			});
-
-			this.ok(res, promosByStatus);
-			return;
-		}
-
-		const result = await this.promoService.getPromoList({ userEmail: emailCondition });
+		const result = await this.promoService.getPromoList({
+			userEmail: emailCondition,
+			params: req.query,
+		});
 		this.ok(res, result);
 	}
 }

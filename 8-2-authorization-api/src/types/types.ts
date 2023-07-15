@@ -13,6 +13,7 @@ export const TYPES = {
 	ItemsService: Symbol.for('ItemsService'),
 	ItemsRepository: Symbol.for('ItemsRepository'),
 	ItemsController: Symbol.for('ItemsController'),
+	QueryFormatter: Symbol.for('QueryFormatter'),
 };
 
 export type Status = 'new' | 'published' | 'declined';

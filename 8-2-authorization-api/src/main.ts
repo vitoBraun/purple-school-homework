@@ -26,6 +26,7 @@ import { ItemsController } from './items/items.controller';
 import { ItemsRepository } from './items/items.repository';
 import { ItemsService } from './items/items.service';
 import { IItemsRepository } from './items/types/items.repository.interface';
+import { QueryFormatter } from './common/query-formatter.middleware';
 
 export interface IBootsrapReturn {
 	appContainer: Container;
@@ -46,6 +47,7 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
 	bind<IItemsRepository>(TYPES.ItemsRepository).to(ItemsRepository).inSingletonScope();
 	bind<IItemsController>(TYPES.ItemsController).to(ItemsController).inSingletonScope();
 	bind<IItemsService>(TYPES.ItemsService).to(ItemsService).inSingletonScope();
+	bind<QueryFormatter>(TYPES.QueryFormatter).to(QueryFormatter).inSingletonScope();
 	bind<App>(TYPES.Application).to(App);
 });
 

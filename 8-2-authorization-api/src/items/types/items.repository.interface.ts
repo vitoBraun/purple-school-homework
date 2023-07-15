@@ -1,9 +1,10 @@
 import { CategoryModel, ItemModel } from '@prisma/client';
 import { CreateItemDto } from '../dto/create-Item.dto';
-
+import { ItemsWithCategories } from './types';
+import { Request } from 'express';
 export interface IItemsRepository {
-	create: (item: CreateItemDto) => Promise<ItemModel | null>;
-	createCategory: (category: string) => Promise<CategoryModel | null>;
-	getCategories: () => Promise<CategoryModel[] | null>;
-	getItems: (category?: string) => Promise<ItemModel[] | null>;
+	create: (item: CreateItemDto) => Promise<ItemModel>;
+	createCategory: (category: string) => Promise<CategoryModel | never>;
+	getCategories: () => Promise<CategoryModel[] | []>;
+	getItems: (params: Request['query']) => Promise<ItemsWithCategories[] | []>;
 }

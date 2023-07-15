@@ -11,7 +11,7 @@ export interface IPromoRepository {
 		params,
 	}: {
 		userEmail?: string;
-		params?: Record<string, any>;
+		params: Record<string, any>;
 	}) => Promise<PromoModel[] | null>;
 	updateStatus: (id: number, status: Status) => Promise<PromoModel | null>;
 	find: (id: number, email?: string) => Promise<PromoModel | null>;

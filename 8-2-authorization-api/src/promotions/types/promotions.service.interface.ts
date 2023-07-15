@@ -24,6 +24,6 @@ export interface IPromoService {
 		params,
 	}: {
 		userEmail?: string;
-		params?: Record<string, any>;
+		params: Record<string, any>;
 	}) => Promise<PromoModel[] | null>;
 }
