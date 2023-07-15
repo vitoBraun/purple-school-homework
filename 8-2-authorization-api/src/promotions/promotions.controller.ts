@@ -119,20 +119,21 @@ export class PromoController extends BaseController implements IPromoController 
 	async list(req: Request<QueryOptions, {}, { user: string }>, res: Response): Promise<void> {
 		const { user } = req;
 		const isAdmin = await this.userService.validateAdmin(user);
+		const emailCondition = isAdmin ? undefined : user;
 
 		const query = req.query;
+
 		if (query) {
-			console.log(query);
 			const promosByStatus = await this.promoService.getPromoList({
-				params: query,
-				userEmail: isAdmin ? undefined : user,
+				params: { status: 'published', ...query },
+				userEmail: emailCondition,
 			});
 
 			this.ok(res, promosByStatus);
 			return;
 		}
 
-		const result = await this.promoService.getPromoList({ userEmail: isAdmin ? undefined : user });
+		const result = await this.promoService.getPromoList({ userEmail: emailCondition });
 		this.ok(res, result);
 	}
 }

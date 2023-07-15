@@ -5,20 +5,19 @@ import { inject, injectable } from 'inversify';
 import { Status, TYPES } from '../types/types';
 import { IPromoRepository } from './types/promotions.repository.interface';
 import { Promo } from './promotions.entity';
+import { resolveListQuery } from '../common/utils';
 
 @injectable()
 export class PromoRepository implements IPromoRepository {
 	constructor(@inject(TYPES.PrismaService) private prismaService: PrismaService) {}
 
 	async create({ title, description }: Promo, user: string): Promise<PromoModel | null> {
-		const creator = await this.prismaService.client.userModel.findFirst({
-			where: { email: user },
-		});
-		if (!creator) {
+		const creatorId = await this.getCreatorId(user);
+		if (!creatorId) {
 			return null;
 		}
 		return this.prismaService.client.promoModel.create({
-			data: { title, description, creatorId: creator.id },
+			data: { title, description, creatorId },
 		});
 	}
 
@@ -52,28 +51,24 @@ export class PromoRepository implements IPromoRepository {
 		userEmail?: string;
 		params?: Record<string, any>;
 	}): Promise<PromoModel[] | null> {
-		const paggination = params?.page &&
-			params?.perPage && {
-				take: Number(params.perPage),
-				skip: (Number(params.page) - 1) * Number(params.perPage),
-			};
-		delete params?.page, delete params?.perPage;
+		const { filter, paggination, restParams } = resolveListQuery(params);
 		if (!userEmail) {
-			return this.prismaService.client.promoModel.findMany(
-				params && { where: { ...params }, ...paggination },
-			);
+			return this.prismaService.client.promoModel.findMany({ where: filter, ...paggination });
+		} else {
+			const creatorId = await this.getCreatorId(userEmail);
+			if (!creatorId) {
+				return null;
+			}
+			return this.prismaService.client.promoModel.findMany({
+				where: { creatorId, ...restParams },
+				...paggination,
+			});
 		}
-		const creatorId = await this.getCreatorId(userEmail);
-		if (!creatorId) {
-			return null;
-		}
-		return this.prismaService.client.promoModel.findMany({
-			where: { creatorId, ...params },
-		});
 	}
 	async find(id: number, email?: string): Promise<PromoModel | null> {
+		const creatorId = email ? await this.getCreatorId(email) : undefined;
 		return this.prismaService.client.promoModel.findFirst({
-			where: { id, ...(email && { email }) },
+			where: { id, ...(creatorId && { creatorId }) },
 		});
 	}
 

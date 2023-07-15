@@ -5,7 +5,7 @@ import { IConfigService } from '../config/config.service.interface';
 import { TYPES } from '../types/types';
 import { IUsersRepository } from './types/users.repository.interface';
 import { UserModel } from '@prisma/client';
-import jwt from 'jsonwebtoken';
+
 @injectable()
 export class UserService implements IUserService {
 	constructor(
