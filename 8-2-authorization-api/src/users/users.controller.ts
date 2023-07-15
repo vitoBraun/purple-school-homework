@@ -11,7 +11,7 @@ import { UserRegisterDto } from './dto/user-regiter.dto';
 import { ValidateMiddleware } from '../common/validate.middleware';
 import { sign } from 'jsonwebtoken';
 import { IConfigService } from '../config/config.service.interface';
-import { AuthGuard } from '../common/auth.guard';
+import { AuthAdmin, AuthGuard } from '../common/auth.guard';
 import { UserService } from './users.sevice';
 
 @injectable()
@@ -36,10 +36,22 @@ export class UserController extends BaseController implements IUserController {
 				middleware: [new ValidateMiddleware(UserLoginDto)],
 			},
 			{
+				path: '/delete',
+				method: 'delete',
+				function: this.delete,
+				middleware: [new AuthAdmin(this.userService)],
+			},
+			{
 				path: '/info',
 				method: 'get',
 				function: this.info,
 				middleware: [new AuthGuard()],
+			},
+			{
+				path: '/password',
+				method: 'post',
+				function: this.changePassword,
+				middleware: [new AuthAdmin(this.userService)],
 			},
 		]);
 	}
@@ -68,12 +80,34 @@ export class UserController extends BaseController implements IUserController {
 		if (!result) {
 			return next(new HttpError(422, 'The user is already existing'));
 		}
-		this.ok(res, { email: result.email, id: result.id });
+		this.ok(res, { email: result.email, id: result.id, type: result.type });
 	}
 
 	async info({ user }: Request, res: Response, next: NextFunction): Promise<void> {
 		const userInfo = await this.userService.getUserInfo(user);
-		this.ok(res, { email: userInfo?.email, id: userInfo?.id });
+		this.ok(res, { email: userInfo?.email, id: userInfo?.id, type: userInfo?.type });
+	}
+
+	async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+		const { email } = req.body;
+		const result = await this.userService.deleteUser(email);
+		if (!result) {
+			return next(new HttpError(422, 'The user is not existing'));
+		}
+		this.send(res, 200, result);
+	}
+
+	async changePassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+		const isAdmin = await this.userService.validateAdmin(req.user);
+		if (!isAdmin) {
+			return next(new HttpError(403, 'You do not have permission'));
+		}
+		const { email, newPassword } = req.body;
+		if (!email || !newPassword) {
+			return next(new HttpError(422, 'Incorrect data'));
+		}
+		const result = await this.userService.changeUserPassword(email, newPassword);
+		this.ok(res, result);
 	}
 
 	private signJWT(email: string, secret: string): Promise<string> {

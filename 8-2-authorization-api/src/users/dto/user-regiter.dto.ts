@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MaxLength } from 'class-validator';
+import { IsEmail, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class UserRegisterDto {
 	@MaxLength(100)
@@ -12,4 +12,8 @@ export class UserRegisterDto {
 	@MaxLength(150)
 	@IsString({ message: 'Incorrect name' })
 	name: string;
+
+	@IsOptional()
+	@IsString({ message: 'Incorrect type' })
+	type?: 'provider' | 'admin';
 }

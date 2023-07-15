@@ -43,13 +43,24 @@ export class UserService implements IUserService {
 		}
 		return true;
 	}
+	async changeUserPassword(email: string, newPassword: string): Promise<UserModel | null> {
+		const salt = await this.configService.get('SALT');
+		const passwordHash = await User.createHash(newPassword, salt);
+		return this.usersRepository.changePassword(email, passwordHash);
+	}
 	async getUserInfo(email: string): Promise<UserModel | null> {
 		return this.usersRepository.find(email);
 	}
 
-	async getUserIdFromJWT(token: string): Promise<string | null> {
-		const decodedToken = await jwt.decode(token);
-		console.log(decodedToken);
-		return decodedToken as string;
+	async deleteUser(email: string): Promise<UserModel | null> {
+		return this.usersRepository.delete(email);
+	}
+
+	async validateAdmin(email: string): Promise<boolean> {
+		const existingUser = await this.usersRepository.find(email);
+		if (existingUser?.type === 'admin') {
+			return true;
+		}
+		return false;
 	}
 }

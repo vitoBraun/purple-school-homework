@@ -13,6 +13,7 @@ import { AuthGuard } from '../common/auth.guard';
 import { CreatePromoDto, EditPromoDto } from './dto/promotion.dto';
 import { IPromoService } from './types/promotions.service.interface';
 import { HttpError } from '../errors/http-error.class';
+import { IUserService } from '../users/types/users.sevice.interface';
 
 @injectable()
 export class PromoController extends BaseController implements IPromoController {
@@ -20,6 +21,7 @@ export class PromoController extends BaseController implements IPromoController 
 		@inject(TYPES.ILogger) private loggerService: ILogger,
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.PromoService) private promoService: IPromoService,
+		@inject(TYPES.UserService) private userService: IUserService,
 	) {
 		super(loggerService);
 		this.bindRoutes([
@@ -61,7 +63,7 @@ export class PromoController extends BaseController implements IPromoController 
 			return next(new HttpError(422, 'Incorrect data'));
 		}
 		const result = await this.promoService.createPromo({ title, description, creatorEmail: user });
-		this.ok(res, result);
+		this.created(res, result);
 	}
 
 	async edit(req: Request<{}, {}, EditPromoDto>, res: Response, next: NextFunction): Promise<void> {
@@ -79,23 +81,24 @@ export class PromoController extends BaseController implements IPromoController 
 		next: NextFunction,
 	): Promise<void> {
 		const { id } = req.body;
+		const { user } = req;
+		const isAdmin = await this.userService.validateAdmin(user);
 		if (!id) {
 			return next(new HttpError(422, 'Promo Id has not been provided'));
 		}
-		const result = await this.promoService.deletePromo(id);
+
+		const result = await this.promoService.deletePromo(id, isAdmin ? undefined : user);
 		if (!result) {
 			return next(new HttpError(422, 'Promo does not exist!'));
 		}
-		this.ok(res, result);
+		this.send(res, 200, result);
 	}
 
-	async list(
-		req: Request<{}, {}, { user: string }>,
-		res: Response,
-		next: NextFunction,
-	): Promise<void> {
+	async list(req: Request<{}, {}, { user: string }>, res: Response): Promise<void> {
 		const { user } = req;
-		const result = await this.promoService.getPromoList(user);
+		const isAdmin = await this.userService.validateAdmin(user);
+
+		const result = await this.promoService.getPromoList(isAdmin ? undefined : user);
 		this.ok(res, result);
 	}
 }

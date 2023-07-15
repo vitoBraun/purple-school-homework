@@ -12,6 +12,6 @@ export interface IPromoService {
 		title: string;
 		description: string;
 	}) => Promise<PromoModel | null>;
-	deletePromo: (id: number) => Promise<PromoModel | null>;
-	getPromoList: (userEmail: string) => Promise<PromoModel[] | null>;
+	deletePromo: (id: number, email?: string) => Promise<PromoModel | null>;
+	getPromoList: (userEmail?: string) => Promise<PromoModel[] | null>;
 }

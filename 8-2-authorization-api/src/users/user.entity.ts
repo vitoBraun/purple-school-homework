@@ -29,4 +29,7 @@ export class User {
 	static async comparePasswords(password: string, hashedPassword: string): Promise<boolean> {
 		return compare(password, hashedPassword);
 	}
+	static async createHash(password: string, salt: string): Promise<string> {
+		return await hash(password, Number(salt));
+	}
 }

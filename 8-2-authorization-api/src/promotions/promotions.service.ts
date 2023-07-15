@@ -39,8 +39,8 @@ export class PromoService implements IPromoService {
 		return editedPromo;
 	}
 
-	async deletePromo(id: number): Promise<PromoModel | null> {
-		const existingPromo = await this.promoRepository.find(id);
+	async deletePromo(id: number, email?: string): Promise<PromoModel | null> {
+		const existingPromo = await this.promoRepository.find(id, email);
 		if (!existingPromo) {
 			return null;
 		}
@@ -48,8 +48,8 @@ export class PromoService implements IPromoService {
 		return deletedExistePromo;
 	}
 
-	async getPromoList(userEmail: string): Promise<PromoModel[] | null> {
-		const list = await this.promoRepository.getList(userEmail);
+	async getPromoList(userEmail?: string): Promise<PromoModel[] | null> {
+		const list = await this.promoRepository.getList(userEmail && userEmail);
 		return list;
 	}
 }

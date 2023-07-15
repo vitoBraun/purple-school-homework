@@ -11,7 +11,6 @@ import { IConfigService } from './config/config.service.interface';
 import { IExeptionFilter } from './errors/exeption.filter.interface';
 import { UserController } from './users/users.controller';
 import { PrismaService } from './database/prisma.service';
-import { IPromoController } from './promotions/types/promotions.controller.interface';
 
 @injectable()
 export class App {

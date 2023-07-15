@@ -13,7 +13,20 @@ export class UsersRepository implements IUsersRepository {
 			data: { email, password, name, type },
 		});
 	}
+	async changePassword(email: string, passwordHash: string): Promise<UserModel | null> {
+		return this.prismaService.client.userModel.update({
+			where: { email },
+			data: { password: passwordHash },
+		});
+	}
 	async find(email: string): Promise<UserModel | null> {
 		return this.prismaService.client.userModel.findFirst({ where: { email } });
+	}
+	async delete(email: string): Promise<UserModel | null> {
+		const existingUser = await this.prismaService.client.userModel.findFirst({ where: { email } });
+		if (!existingUser) {
+			return null;
+		}
+		return this.prismaService.client.userModel.delete({ where: { email } });
 	}
 }
