@@ -25,7 +25,7 @@ export class ItemsController extends BaseController implements IItemsController 
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.ExecptionFilter) private exeptionFilter: ExecptionFilter,
 	) {
-		super(loggerService);
+		super();
 		this.bindRoutes([
 			{
 				path: '/create',
