@@ -32,7 +32,7 @@ export class QueryFormatter implements IMiddleware {
 	private itemsQuery(): void {
 		const { category } = this._reqQuery;
 		if (category) {
-			const filter = category && {
+			const filter = {
 				where: {
 					categories: {
 						some: {
@@ -44,12 +44,12 @@ export class QueryFormatter implements IMiddleware {
 			delete this._reqQuery.category;
 			this._queryObject = { ...this._queryObject, ...filter };
 		}
-		const addCategoryQuery = {
+		const addCategoryField = {
 			include: {
 				categories: true,
 			},
 		};
-		this._queryObject = { ...this._queryObject, ...addCategoryQuery };
+		this._queryObject = { ...this._queryObject, ...addCategoryField };
 	}
 	private promoQuery(): void {
 		const filter = {
