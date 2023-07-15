@@ -76,9 +76,6 @@ export class PromoRepository implements IPromoRepository {
 		const creator = await this.prismaService.client.userModel.findFirst({
 			where: { email },
 		});
-		if (!creator) {
-			return null;
-		}
-		return creator.id;
+		return creator?.id ?? null;
 	}
 }
