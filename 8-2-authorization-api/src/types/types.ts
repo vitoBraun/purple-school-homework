@@ -16,7 +16,13 @@ export const TYPES = {
 	QueryFormatter: Symbol.for('QueryFormatter'),
 };
 
-export type Status = 'new' | 'published' | 'declined';
+export const statusNames = {
+	new: 'Новый',
+	published: 'Опубликован',
+	declined: 'Откланен',
+};
+
+export type Status = keyof typeof statusNames;
 
 export const Roles = {
 	admin: 'Админ',

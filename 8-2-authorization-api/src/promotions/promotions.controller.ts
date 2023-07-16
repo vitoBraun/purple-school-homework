@@ -3,7 +3,7 @@ import { BaseController } from '../common/base.controller';
 import 'reflect-metadata';
 
 import { inject, injectable } from 'inversify';
-import { Status, TYPES } from '../types/types';
+import { Status, TYPES, statusNames } from '../types/types';
 import { ILogger } from '../logger/logger.interface';
 
 import { IConfigService } from '../config/config.service.interface';
@@ -94,7 +94,9 @@ export class PromoController extends BaseController implements IPromoController 
 		next: NextFunction,
 	): Promise<void> {
 		const { id, status } = req.body;
-		if (!id || !status) {
+		const inValidRequest =
+			!id || !status || !Object.prototype.hasOwnProperty.call(statusNames, status);
+		if (inValidRequest) {
 			return next(new HttpError(422, 'Incorrect data'));
 		}
 		const result = await this.promoService.updatePromoStatus(id, status);
