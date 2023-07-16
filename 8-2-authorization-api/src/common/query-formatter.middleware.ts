@@ -1,36 +1,31 @@
-import { UserService } from './../users/users.sevice';
 import { Response, Request, NextFunction } from 'express';
-import { inject, injectable } from 'inversify';
-import { IMiddleware } from './middleware.interface';
-import { UserModel } from '@prisma/client';
-import { TYPES } from '../types/types';
+import { injectable } from 'inversify';
+import { Middleware } from './middleware.interface';
 
 @injectable()
-export class QueryFormatter implements IMiddleware {
+export class QueryFormatter extends Middleware {
 	_reqQuery: any;
 	_userInfo: any;
 	_isAdmin: boolean;
 	_queryObject: any;
 	_req: any;
 
-	private entity: any = {
-		'/items': this.getItemsQuery.bind(this),
-		'/promo': this.getPromoQuery.bind(this),
+	private methodsByRoute: any = {
+		'/items': this.addItemsParams.bind(this),
+		'/promo': this.addPromoParams.bind(this),
 	};
-
-	constructor(@inject(TYPES.UserService) private userService: UserService) {}
 
 	async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
 		this._queryObject = {};
 		this._req = req;
 		this._reqQuery = { ...this._req.query };
 
-		this._userInfo = await this.userService.getUserInfo(req.user);
+		this._userInfo = await this.userServ.getUserInfo(req.user);
 		this._isAdmin = this._userInfo.type === 'admin';
 
-		this.getQueryMethodByRoute()();
-		this.getBaseQuery();
-		console.log(this._queryObject);
+		const route = this._req.baseUrl;
+		this.methodsByRoute[route]();
+		this.addBaseParams();
 
 		req.query = { ...this._queryObject };
 
@@ -41,12 +36,7 @@ export class QueryFormatter implements IMiddleware {
 		return this._queryObject;
 	}
 
-	private getQueryMethodByRoute(): Function {
-		const route = this._req.baseUrl;
-		return this.entity[route];
-	}
-
-	private addParamsToQuery(params: any, subObject?: string): void {
+	private mutateQueryObject(params: any, subObject?: string): void {
 		if (subObject) {
 			if (!Object.prototype.hasOwnProperty.call(this._queryObject, subObject)) {
 				this._queryObject[subObject] = {};
@@ -57,7 +47,7 @@ export class QueryFormatter implements IMiddleware {
 		this._queryObject = { ...this._queryObject, ...params };
 	}
 
-	private getItemsQuery(): void {
+	private addItemsParams(): void {
 		const { category } = this._reqQuery;
 		if (category) {
 			const filter = {
@@ -70,16 +60,16 @@ export class QueryFormatter implements IMiddleware {
 				},
 			};
 			delete this._reqQuery.category;
-			this.addParamsToQuery(filter);
+			this.mutateQueryObject(filter);
 		}
 		const includeCategoryField = {
 			include: {
 				categories: true,
 			},
 		};
-		this.addParamsToQuery(includeCategoryField);
+		this.mutateQueryObject(includeCategoryField);
 	}
-	private getPromoQuery(): void {
+	private addPromoParams(): void {
 		const filter: any = {
 			where: { ...(!this._reqQuery.status && !this._isAdmin && { status: 'published' }) },
 		};
@@ -88,10 +78,10 @@ export class QueryFormatter implements IMiddleware {
 			filter.where = { ...filter.where, creatorEmail: this._userInfo.email };
 		}
 
-		this.addParamsToQuery(filter.where, 'where');
+		this.mutateQueryObject(filter.where, 'where');
 	}
 
-	private getBaseQuery(): void {
+	private addBaseParams(): void {
 		const { page, perPage } = this._reqQuery;
 
 		const paggination = page &&
@@ -102,7 +92,7 @@ export class QueryFormatter implements IMiddleware {
 
 		delete this._reqQuery.page;
 		delete this._reqQuery.perPage;
-		this.addParamsToQuery(paggination);
-		this.addParamsToQuery(this._reqQuery, 'where');
+		this.mutateQueryObject(paggination);
+		this.mutateQueryObject(this._reqQuery, 'where');
 	}
 }

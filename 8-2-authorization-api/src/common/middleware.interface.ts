@@ -10,7 +10,7 @@ export interface IMiddleware {
 
 @injectable()
 export class Middleware implements IMiddleware {
-	userServ: UserService;
+	public userServ: UserService;
 	constructor(@inject(TYPES.UserService) private userService: UserService) {
 		this.userServ = userService;
 	}
