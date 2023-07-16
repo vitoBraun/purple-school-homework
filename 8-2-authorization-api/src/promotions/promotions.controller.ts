@@ -56,7 +56,7 @@ export class PromoController extends BaseController implements IPromoController 
 				path: '/list',
 				method: 'get',
 				function: this.list,
-				middleware: [new QueryFormatter(), new AuthGuard()],
+				middleware: [new QueryFormatter(this.userService), new AuthGuard()],
 			},
 		]);
 	}
@@ -67,11 +67,16 @@ export class PromoController extends BaseController implements IPromoController 
 		if (!title || !description) {
 			return next(new HttpError(422, 'Incorrect data'));
 		}
-		const result = await this.promoService.createPromo({ title, description, user });
-		if (!result) {
-			return next(new HttpError(422, 'Creation failed!'));
+		try {
+			const result = await this.promoService.createPromo({ title, description, user });
+
+			if (!result) {
+				return next(new HttpError(422, 'Creation failed!'));
+			}
+			this.created(res, result);
+		} catch (error: any) {
+			return next(new HttpError(422, error.message));
 		}
-		this.created(res, result);
 	}
 
 	async edit(req: Request<{}, {}, EditPromoDto>, res: Response, next: NextFunction): Promise<void> {

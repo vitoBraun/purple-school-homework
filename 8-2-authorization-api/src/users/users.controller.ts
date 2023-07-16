@@ -82,11 +82,15 @@ export class UserController extends BaseController implements IUserController {
 		res: Response,
 		next: NextFunction,
 	): Promise<void> {
-		const result = await this.userService.createUser(body);
-		if (!result) {
-			return next(new HttpError(422, 'The user is already existing'));
+		try {
+			const result = await this.userService.createUser(body);
+			if (!result) {
+				return next(new HttpError(422, 'The user is already existing'));
+			}
+			this.ok(res, { email: result.email, id: result.id, type: result.type });
+		} catch (error: any) {
+			this.send(res, 400, error.message);
 		}
-		this.ok(res, { email: result.email, id: result.id, type: result.type });
 	}
 
 	async info({ user }: Request, res: Response, next: NextFunction): Promise<void> {

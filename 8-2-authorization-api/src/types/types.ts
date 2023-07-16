@@ -17,4 +17,12 @@ export const TYPES = {
 };
 
 export type Status = 'new' | 'published' | 'declined';
-export type Roles = 'admin' | 'provider' | 'storeManager' | 'storeAdministrator';
+
+export const Roles = {
+	admin: 'Админ',
+	provider: 'Поставщик',
+	storeManager: 'Кладовщик',
+	storeAdministrator: 'Администратор склада',
+};
+
+export type Role = keyof typeof Roles;

@@ -24,6 +24,7 @@ model PromoModel {
   creator      UserModel @relation(fields: [creatorId], references: [id])
   creatorId    Int
   status       String    @default("new")
+  creatorEmail String    @default("email")
 }
 
 model ItemModel {

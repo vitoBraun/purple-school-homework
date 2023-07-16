@@ -1,3 +1,4 @@
+import { Role, Roles } from './../types/types';
 import { inject, injectable } from 'inversify';
 import { User } from './user.entity';
 import { IUserService } from './types/users.sevice.interface';
@@ -5,6 +6,7 @@ import { IConfigService } from '../config/config.service.interface';
 import { TYPES } from '../types/types';
 import { IUsersRepository } from './types/users.repository.interface';
 import { UserModel } from '@prisma/client';
+import { HttpError } from '../errors/http-error.class';
 
 @injectable()
 export class UserService implements IUserService {
@@ -24,6 +26,9 @@ export class UserService implements IUserService {
 		type?: string;
 	}): Promise<UserModel | null> {
 		const newUser = new User(email, name, type);
+		if (!Object.keys(Roles).includes(type)) {
+			throw new HttpError(400, 'Неверный тип пользователя');
+		}
 		const salt = await this.configService.get('SALT');
 		await newUser.setPassword(password, salt);
 		const existedUser = await this.usersRepository.find(email);

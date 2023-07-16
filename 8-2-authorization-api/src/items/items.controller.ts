@@ -49,7 +49,7 @@ export class ItemsController extends BaseController implements IItemsController 
 				path: '/list',
 				method: 'get',
 				function: this.getItems,
-				middleware: [new QueryFormatter()],
+				middleware: [new QueryFormatter(this.userService)],
 			},
 		]);
 	}
