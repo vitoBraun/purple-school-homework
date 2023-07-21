@@ -11,7 +11,7 @@ import { UserRegisterDto } from './dto/user-regiter.dto';
 import { ValidateMiddleware } from '../common/validate.middleware';
 import { sign } from 'jsonwebtoken';
 import { IConfigService } from '../config/config.service.interface';
-import { AuthAdmin, AuthGuard } from '../common/auth.guard';
+import { AuthGuard } from '../common/auth.guard';
 import { UserService } from './users.sevice';
 
 @injectable()
@@ -39,25 +39,29 @@ export class UserController extends BaseController implements IUserController {
 				path: '/delete',
 				method: 'delete',
 				function: this.delete,
-				middleware: [new AuthAdmin(this.userService)],
+				// middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard(this.userService, ['admin'])],
 			},
 			{
 				path: '/info',
 				method: 'get',
 				function: this.info,
-				middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard(this.userService, ['admin'])],
 			},
 			{
 				path: '/list',
 				method: 'get',
 				function: this.list,
-				middleware: [new AuthAdmin(this.userService)],
+				// middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard(this.userService, ['admin'])],
 			},
 			{
 				path: '/password',
 				method: 'post',
 				function: this.changePassword,
-				middleware: [new AuthAdmin(this.userService)],
+				// middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard(this.userService, ['admin'])],
 			},
 		]);
 	}

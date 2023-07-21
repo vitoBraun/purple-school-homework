@@ -14,3 +14,20 @@ export class CreateItemDto {
 
 	categories: string[];
 }
+
+export class EditItemDto {
+	id: number;
+
+	@MaxLength(100)
+	name: string;
+
+	description: string;
+
+	@MaxLength(50)
+	price: number;
+
+	@MaxLength(50)
+	storeCount: number;
+
+	categories: string[];
+}

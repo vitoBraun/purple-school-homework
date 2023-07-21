@@ -5,4 +5,6 @@ export interface IItemsController {
 	createCategory: (req: Request, res: Response, next: NextFunction) => void;
 	getCategories: (req: Request, res: Response, next: NextFunction) => void;
 	getItems: (req: Request, res: Response, next: NextFunction) => void;
+	editItem: (req: Request, res: Response, next: NextFunction) => void;
+	changeCount: (req: Request, res: Response, next: NextFunction) => void;
 }

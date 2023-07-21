@@ -14,6 +14,7 @@ import { PrismaService } from './database/prisma.service';
 import { ItemsController } from './items/items.controller';
 import bodyParser from 'body-parser';
 import { queryParser } from 'express-query-parser';
+import { UserService } from './users/users.sevice';
 
 @injectable()
 export class App {
@@ -24,6 +25,7 @@ export class App {
 	constructor(
 		@inject(TYPES.ILogger) private logger: ILogger,
 		@inject(TYPES.UserController) private userController: UserController,
+		@inject(TYPES.UserService) private userService: UserService,
 		@inject(TYPES.ExecptionFilter) private exeptionFilter: IExeptionFilter,
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.PrismaService) private prismaService: PrismaService,

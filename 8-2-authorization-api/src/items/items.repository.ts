@@ -5,8 +5,8 @@ import { CategoryModel, ItemModel } from '@prisma/client';
 
 import { TYPES } from '../types/types';
 import { PrismaService } from '../database/prisma.service';
-import { CreateItemDto } from './dto/create-Item.dto';
-import { Request } from 'express';
+import { CreateItemDto, EditItemDto } from './dto/create-Item.dto';
+
 import { ItemsWithCategories } from './types/types';
 import { QueryFormatter } from '../common/query-formatter.middleware';
 
@@ -51,6 +51,29 @@ export class ItemsRepository implements IItemsRepository {
 	async getCategories(): Promise<CategoryModel[] | []> {
 		const categories = await this.prismaService.client.categoryModel.findMany();
 		return categories;
+	}
+	async editItem(itemInfo: EditItemDto): Promise<ItemModel> {
+		const categories = await this.prismaService.client.categoryModel.findMany({
+			where: { name: { in: itemInfo.categories } },
+		});
+
+		if (categories.length === 0) {
+			throw new Error('Category not exist');
+		}
+		const data = {
+			...itemInfo,
+			...(itemInfo.categories && {
+				categories: { set: categories.map((category) => ({ id: category.id })) },
+			}),
+		};
+		const existingItem = await this.prismaService.client.itemModel.update({
+			where: { id: itemInfo.id },
+			data,
+			include: {
+				categories: true,
+			},
+		});
+		return existingItem;
 	}
 
 	async getItems(params: any): Promise<ItemsWithCategories[] | []> {

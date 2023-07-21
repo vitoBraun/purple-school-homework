@@ -1,22 +1,31 @@
-import { IMiddleware, Middleware } from './middleware.interface';
+import { inject, injectable } from 'inversify';
+import { IMiddleware } from './middleware.interface';
 import { NextFunction, Request, Response } from 'express';
+import { TYPES } from '../types/types';
+import { UserService } from '../users/users.sevice';
 
+@injectable()
 export class AuthGuard implements IMiddleware {
-	execute(req: Request, res: Response, next: NextFunction): void {
-		if (req.user) {
-			return next();
-		}
-		res.status(401).send({ error: 'User not logged in' });
-	}
-}
+	private permissions: any = {
+		'/items/create': ['admin', 'storeAdministrator'],
+		'/items/edit': ['admin', 'storeAdministrator'],
+		'/items/count': ['admin', 'storeAdministrator', 'storeManager'],
+	};
+	constructor(@inject(TYPES.UserService) private userService: UserService) {}
 
-export class AuthAdmin extends Middleware {
 	async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
-		const user = await this.userServ.getUserInfo(req.user);
-		if (user?.type === 'admin') {
-			return next();
+		const userInfo = await this.userService.getUserInfo(req.user);
+		const route = (req.baseUrl + req.route.path).toString();
+		const allowedRoles = this.permissions[route];
+
+		if (userInfo) {
+			if (!allowedRoles) {
+				return next();
+			} else if (this.permissions[route] && allowedRoles.includes(userInfo.type)) {
+				return next();
+			}
 		}
 
-		res.status(401).send({ error: 'User is not admin' });
+		res.status(401).send({ error: 'No permission' });
 	}
 }

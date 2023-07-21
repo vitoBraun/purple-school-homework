@@ -4,6 +4,7 @@ import { User } from './user.entity';
 import { IUsersRepository } from './types/users.repository.interface';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types/types';
+import { AuthGuard } from '../common/auth.guard';
 
 @injectable()
 export class UsersRepository implements IUsersRepository {

@@ -9,7 +9,7 @@ import { ILogger } from '../logger/logger.interface';
 import { IConfigService } from '../config/config.service.interface';
 
 import { IPromoController } from './types/promotions.controller.interface';
-import { AuthAdmin, AuthGuard } from '../common/auth.guard';
+import { AuthGuard } from '../common/auth.guard';
 import { EditPromoDto } from './dto/promotion.dto';
 import { IPromoService } from './types/promotions.service.interface';
 import { HttpError } from '../errors/http-error.class';
@@ -32,31 +32,31 @@ export class PromoController extends BaseController implements IPromoController 
 				path: '/create',
 				method: 'post',
 				function: this.create,
-				middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard()],
 			},
 			{
 				path: '/edit',
 				method: 'post',
 				function: this.edit,
-				middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard()],
 			},
 			{
 				path: '/status',
 				method: 'patch',
 				function: this.changeStatus,
-				middleware: [new AuthAdmin(this.userService)],
+				// middleware: [new AuthGuard()],
 			},
 			{
 				path: '/delete',
 				method: 'delete',
 				function: this.delete,
-				middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard()],
 			},
 			{
 				path: '/list',
 				method: 'get',
 				function: this.list,
-				middleware: [new QueryFormatter(this.userService), new AuthGuard()],
+				// middleware: [new QueryFormatter(this.userService), new AuthGuard()],
 			},
 		]);
 	}

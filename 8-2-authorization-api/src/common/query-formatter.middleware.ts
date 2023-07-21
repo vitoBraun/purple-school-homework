@@ -1,39 +1,36 @@
 import { Response, Request, NextFunction } from 'express';
-import { injectable } from 'inversify';
-import { Middleware } from './middleware.interface';
+import { inject, injectable } from 'inversify';
+import { IMiddleware } from './middleware.interface';
+import { UserService } from '../users/users.sevice';
+import { TYPES } from '../types/types';
 
 @injectable()
-export class QueryFormatter extends Middleware {
+export class QueryFormatter implements IMiddleware {
 	_reqQuery: any;
 	_userInfo: any;
 	_isAdmin: boolean;
 	_queryObject: any;
-	_req: any;
 
 	private methodsByRoute: any = {
 		'/items': this.addItemsParams.bind(this),
 		'/promo': this.addPromoParams.bind(this),
 	};
+	constructor(@inject(TYPES.UserService) private userService: UserService) {}
 
 	async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
 		this._queryObject = {};
-		this._req = req;
-		this._reqQuery = { ...this._req.query };
+		this._reqQuery = { ...req.query };
 
-		this._userInfo = await this.userServ.getUserInfo(req.user);
+		this._userInfo = await this.userService.getUserInfo(req.user);
 		this._isAdmin = this._userInfo.type === 'admin';
 
-		const route = this._req.baseUrl;
+		const route = req.baseUrl;
 		this.methodsByRoute[route]();
 		this.addBaseParams();
 
 		req.query = { ...this._queryObject };
 
 		next();
-	}
-
-	get queryObject(): any {
-		return this._queryObject;
 	}
 
 	private mutateQueryObject(params: any, subObject?: string): void {
@@ -48,9 +45,26 @@ export class QueryFormatter extends Middleware {
 	}
 
 	private addItemsParams(): void {
+		const baseParams = {
+			include: {
+				categories: true,
+			},
+			where: {
+				storeCount: {
+					gt: 0,
+				},
+			},
+		};
+
+		this.mutateQueryObject(baseParams);
+		if (this._reqQuery.all) {
+			this.mutateQueryObject({ storeCount: undefined }, 'where');
+			delete this._reqQuery.all;
+		}
+
 		const { category } = this._reqQuery;
 		if (category) {
-			const filter = {
+			const byCategory = {
 				where: {
 					categories: {
 						some: {
@@ -60,14 +74,8 @@ export class QueryFormatter extends Middleware {
 				},
 			};
 			delete this._reqQuery.category;
-			this.mutateQueryObject(filter);
+			this.mutateQueryObject(byCategory.where, 'where');
 		}
-		const includeCategoryField = {
-			include: {
-				categories: true,
-			},
-		};
-		this.mutateQueryObject(includeCategoryField);
 	}
 	private addPromoParams(): void {
 		const filter: any = {
@@ -92,6 +100,7 @@ export class QueryFormatter extends Middleware {
 
 		delete this._reqQuery.page;
 		delete this._reqQuery.perPage;
+
 		this.mutateQueryObject(paggination);
 		this.mutateQueryObject(this._reqQuery, 'where');
 	}

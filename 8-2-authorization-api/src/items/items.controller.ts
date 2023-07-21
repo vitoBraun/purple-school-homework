@@ -11,10 +11,11 @@ import { IConfigService } from '../config/config.service.interface';
 
 import { IItemsController } from './types/items.controller.interface';
 import { UserService } from '../users/users.sevice';
-import { CreateItemDto } from './dto/create-Item.dto';
+import { CreateItemDto, EditItemDto } from './dto/create-Item.dto';
 
 import { ExecptionFilter } from '../errors/exeption.filter';
 import { QueryFormatter } from '../common/query-formatter.middleware';
+import { AuthGuard } from '../common/auth.guard';
 
 @injectable()
 export class ItemsController extends BaseController implements IItemsController {
@@ -26,18 +27,19 @@ export class ItemsController extends BaseController implements IItemsController 
 		@inject(TYPES.ExecptionFilter) private exeptionFilter: ExecptionFilter,
 	) {
 		super(loggerService);
+
 		this.bindRoutes([
 			{
 				path: '/create',
 				method: 'post',
 				function: this.create,
-				middleware: [],
+				middleware: [new AuthGuard(this.userService)],
 			},
 			{
 				path: '/category',
 				method: 'post',
 				function: this.createCategory,
-				middleware: [],
+				middleware: [new AuthGuard(this.userService)],
 			},
 			{
 				path: '/categories',
@@ -50,6 +52,18 @@ export class ItemsController extends BaseController implements IItemsController 
 				method: 'get',
 				function: this.getItems,
 				middleware: [new QueryFormatter(this.userService)],
+			},
+			{
+				path: '/edit',
+				method: 'patch',
+				function: this.editItem,
+				middleware: [new AuthGuard(this.userService)],
+			},
+			{
+				path: '/count',
+				method: 'patch',
+				function: this.changeCount,
+				middleware: [new AuthGuard(this.userService)],
 			},
 		]);
 	}
@@ -70,6 +84,21 @@ export class ItemsController extends BaseController implements IItemsController 
 	}
 	async getCategories(req: Request, res: Response, next: NextFunction): Promise<void> {
 		const result = await this.itemsService.getCategories();
+		this.ok(res, result);
+	}
+	async editItem(req: Request, res: Response, next: NextFunction): Promise<void> {
+		try {
+			const itemInfo: EditItemDto = req.body;
+			const result = await this.itemsService.editItem(itemInfo);
+			this.ok(res, result);
+		} catch (error: any) {
+			this.exeptionFilter.catch(error, req, res, next);
+		}
+	}
+	async changeCount(req: Request, res: Response, next: NextFunction): Promise<void> {
+		const { id, storeCount }: { id: number; storeCount: number } = req.body;
+		const itemInfo = { id, storeCount };
+		const result = await this.itemsService.editItem(itemInfo as any);
 		this.ok(res, result);
 	}
 	async getItems(req: Request, res: Response, next: NextFunction): Promise<void> {
