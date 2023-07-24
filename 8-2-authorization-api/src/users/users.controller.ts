@@ -11,7 +11,7 @@ import { UserRegisterDto } from './dto/user-regiter.dto';
 import { ValidateMiddleware } from '../common/validate.middleware';
 import { sign } from 'jsonwebtoken';
 import { IConfigService } from '../config/config.service.interface';
-import { AuthAdmin, AuthGuard } from '../common/auth.guard';
+import { AuthGuard } from '../common/auth.guard';
 import { UserService } from './users.sevice';
 import { UsersRepository } from './users.repository';
 
@@ -41,25 +41,29 @@ export class UserController extends BaseController implements IUserController {
 				path: '/delete',
 				method: 'delete',
 				function: this.delete,
-				middleware: [new AuthAdmin(this.userService)],
+				// middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard(this.userService, ['admin'])],
 			},
 			{
 				path: '/info',
 				method: 'get',
 				function: this.info,
-				middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard(this.userService, ['admin'])],
 			},
 			{
 				path: '/list',
 				method: 'get',
 				function: this.list,
-				middleware: [new AuthAdmin(this.userService)],
+				// middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard(this.userService, ['admin'])],
 			},
 			{
 				path: '/password',
 				method: 'post',
 				function: this.changePassword,
-				middleware: [new AuthAdmin(this.userService)],
+				// middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard(this.userService, ['admin'])],
 			},
 		]);
 	}
@@ -84,11 +88,15 @@ export class UserController extends BaseController implements IUserController {
 		res: Response,
 		next: NextFunction,
 	): Promise<void> {
-		const result = await this.userService.createUser(body);
-		if (!result) {
-			return next(new HttpError(422, 'The user is already existing'));
+		try {
+			const result = await this.userService.createUser(body);
+			if (!result) {
+				return next(new HttpError(422, 'The user is already existing'));
+			}
+			this.ok(res, { email: result.email, id: result.id, type: result.type });
+		} catch (error: any) {
+			this.send(res, 400, error.message);
 		}
-		this.ok(res, { email: result.email, id: result.id, type: result.type });
 	}
 
 	async info({ user }: Request, res: Response, next: NextFunction): Promise<void> {

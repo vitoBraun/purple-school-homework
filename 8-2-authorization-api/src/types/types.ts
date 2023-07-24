@@ -16,5 +16,19 @@ export const TYPES = {
 	QueryFormatter: Symbol.for('QueryFormatter'),
 };
 
-export type Status = 'new' | 'published' | 'declined';
-export type Role = 'admin' | 'provider' | 'storeManager' | 'storeAdministrator';
+export const statusNames = {
+	new: 'Новый',
+	published: 'Опубликован',
+	declined: 'Откланен',
+};
+
+export type Status = keyof typeof statusNames;
+
+export const Roles = {
+	admin: 'Админ',
+	provider: 'Поставщик',
+	storeManager: 'Кладовщик',
+	storeAdministrator: 'Администратор склада',
+};
+
+export type Role = keyof typeof Roles;

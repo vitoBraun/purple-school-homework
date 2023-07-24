@@ -27,6 +27,7 @@ import { ItemsRepository } from './items/items.repository';
 import { ItemsService } from './items/items.service';
 import { IItemsRepository } from './items/types/items.repository.interface';
 import { QueryFormatter } from './common/query-formatter.middleware';
+import { AuthGuard } from './common/auth.guard';
 
 export interface IBootsrapReturn {
 	appContainer: Container;

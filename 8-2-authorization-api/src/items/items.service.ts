@@ -4,9 +4,10 @@ import { TYPES } from '../types/types';
 import { IItemsRepository } from './types/items.repository.interface';
 import { IItemsService } from './types/items.service.interface';
 import { CategoryModel, ItemModel } from '@prisma/client';
-import { CreateItemDto } from './dto/create-Item.dto';
+import { CreateItemDto, EditItemDto } from './dto/create-Item.dto';
 import { ExecptionFilter } from '../errors/exeption.filter';
 import { Request } from 'express';
+import { AuthGuard } from '../common/auth.guard';
 @injectable()
 export class ItemsService implements IItemsService {
 	constructor(
@@ -25,5 +26,8 @@ export class ItemsService implements IItemsService {
 	}
 	async getItems(params: Request['query']): Promise<ItemModel[] | []> {
 		return await this.itemsRepository.getItems(params);
+	}
+	async editItem(itemInfo: EditItemDto): Promise<ItemModel> {
+		return await this.itemsRepository.editItem(itemInfo);
 	}
 }

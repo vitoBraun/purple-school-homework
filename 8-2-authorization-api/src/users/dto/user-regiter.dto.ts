@@ -1,3 +1,4 @@
+import { Role } from './../../types/types';
 import { IsEmail, IsOptional, IsString, MaxLength } from 'class-validator';
 import { Role } from '../../types/types';
 

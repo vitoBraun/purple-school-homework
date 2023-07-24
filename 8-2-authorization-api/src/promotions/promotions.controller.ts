@@ -3,13 +3,13 @@ import { BaseController } from '../common/base.controller';
 import 'reflect-metadata';
 
 import { inject, injectable } from 'inversify';
-import { Status, TYPES } from '../types/types';
+import { Status, TYPES, statusNames } from '../types/types';
 import { ILogger } from '../logger/logger.interface';
 
 import { IConfigService } from '../config/config.service.interface';
 
 import { IPromoController } from './types/promotions.controller.interface';
-import { AuthAdmin, AuthGuard } from '../common/auth.guard';
+import { AuthGuard } from '../common/auth.guard';
 import { EditPromoDto } from './dto/promotion.dto';
 import { IPromoService } from './types/promotions.service.interface';
 import { HttpError } from '../errors/http-error.class';
@@ -32,31 +32,31 @@ export class PromoController extends BaseController implements IPromoController 
 				path: '/create',
 				method: 'post',
 				function: this.create,
-				middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard()],
 			},
 			{
 				path: '/edit',
 				method: 'post',
 				function: this.edit,
-				middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard()],
 			},
 			{
 				path: '/status',
 				method: 'patch',
 				function: this.changeStatus,
-				middleware: [new AuthAdmin(this.userService)],
+				// middleware: [new AuthGuard()],
 			},
 			{
 				path: '/delete',
 				method: 'delete',
 				function: this.delete,
-				middleware: [new AuthGuard()],
+				// middleware: [new AuthGuard()],
 			},
 			{
 				path: '/list',
 				method: 'get',
 				function: this.list,
-				middleware: [new QueryFormatter(), new AuthGuard()],
+				// middleware: [new QueryFormatter(this.userService), new AuthGuard()],
 			},
 		]);
 	}
@@ -67,11 +67,16 @@ export class PromoController extends BaseController implements IPromoController 
 		if (!title || !description) {
 			return next(new HttpError(422, 'Incorrect data'));
 		}
-		const result = await this.promoService.createPromo({ title, description, user });
-		if (!result) {
-			return next(new HttpError(422, 'Creation failed!'));
+		try {
+			const result = await this.promoService.createPromo({ title, description, user });
+
+			if (!result) {
+				return next(new HttpError(422, 'Creation failed!'));
+			}
+			this.created(res, result);
+		} catch (error: any) {
+			return next(new HttpError(422, error.message));
 		}
-		this.created(res, result);
 	}
 
 	async edit(req: Request<{}, {}, EditPromoDto>, res: Response, next: NextFunction): Promise<void> {
@@ -89,7 +94,9 @@ export class PromoController extends BaseController implements IPromoController 
 		next: NextFunction,
 	): Promise<void> {
 		const { id, status } = req.body;
-		if (!id || !status) {
+		const inValidRequest =
+			!id || !status || !Object.prototype.hasOwnProperty.call(statusNames, status);
+		if (inValidRequest) {
 			return next(new HttpError(422, 'Incorrect data'));
 		}
 		const result = await this.promoService.updatePromoStatus(id, status);
