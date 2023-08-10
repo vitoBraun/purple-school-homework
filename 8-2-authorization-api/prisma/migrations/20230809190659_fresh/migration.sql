@@ -17,6 +17,7 @@ CREATE TABLE "PromoModel" (
     "creationDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "creatorId" INTEGER NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'new',
+    "creatorEmail" TEXT NOT NULL DEFAULT 'email',
 
     CONSTRAINT "PromoModel_pkey" PRIMARY KEY ("id")
 );
