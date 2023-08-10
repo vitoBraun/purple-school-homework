@@ -7,8 +7,6 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../types/types';
 import { ILogger } from '../logger/logger.interface';
 
-import { IConfigService } from '../config/config.service.interface';
-
 import { IItemsController } from './types/items.controller.interface';
 import { UserService } from '../users/users.sevice';
 import { CreateItemDto, EditItemDto } from './dto/create-Item.dto';
@@ -23,7 +21,6 @@ export class ItemsController extends BaseController implements IItemsController 
 		@inject(TYPES.ILogger) private loggerService: ILogger,
 		@inject(TYPES.UserService) private userService: UserService,
 		@inject(TYPES.ItemsService) private itemsService: ItemsService,
-		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.ExecptionFilter) private exeptionFilter: ExecptionFilter,
 	) {
 		super(loggerService);
@@ -33,13 +30,13 @@ export class ItemsController extends BaseController implements IItemsController 
 				path: '/create',
 				method: 'post',
 				function: this.create,
-				middleware: [new AuthGuard(this.userService)],
+				middleware: [new AuthGuard(['admin', 'storeAdministrator'])],
 			},
 			{
 				path: '/category',
 				method: 'post',
 				function: this.createCategory,
-				middleware: [new AuthGuard(this.userService)],
+				middleware: [new AuthGuard('allRoles')],
 			},
 			{
 				path: '/categories',
@@ -57,13 +54,13 @@ export class ItemsController extends BaseController implements IItemsController 
 				path: '/edit',
 				method: 'patch',
 				function: this.editItem,
-				middleware: [new AuthGuard(this.userService)],
+				middleware: [new AuthGuard(['admin', 'storeAdministrator'])],
 			},
 			{
 				path: '/count',
 				method: 'patch',
 				function: this.changeCount,
-				middleware: [new AuthGuard(this.userService)],
+				middleware: [new AuthGuard(['admin', 'storeAdministrator', 'storeManager'])],
 			},
 		]);
 	}
