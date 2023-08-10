@@ -20,13 +20,10 @@ import { QueryFormatter } from '../common/query-formatter.middleware';
 @injectable()
 export class PromoController extends BaseController implements IPromoController {
 	constructor(
-		@inject(TYPES.ILogger) private loggerService: ILogger,
-		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.PromoService) private promoService: IPromoService,
 		@inject(TYPES.UserService) private userService: UserService,
-		@inject(TYPES.QueryFormatter) private queryFormatter: QueryFormatter,
 	) {
-		super(loggerService);
+		super();
 		this.bindRoutes([
 			{
 				path: '/create',

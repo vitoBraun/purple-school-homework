@@ -5,7 +5,6 @@ import 'reflect-metadata';
 
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types/types';
-import { ILogger } from '../logger/logger.interface';
 
 import { IItemsController } from './types/items.controller.interface';
 import { UserService } from '../users/users.sevice';
@@ -18,12 +17,11 @@ import { AuthGuard } from '../common/auth.guard';
 @injectable()
 export class ItemsController extends BaseController implements IItemsController {
 	constructor(
-		@inject(TYPES.ILogger) private loggerService: ILogger,
 		@inject(TYPES.UserService) private userService: UserService,
 		@inject(TYPES.ItemsService) private itemsService: ItemsService,
 		@inject(TYPES.ExecptionFilter) private exeptionFilter: ExecptionFilter,
 	) {
-		super(loggerService);
+		super();
 
 		this.bindRoutes([
 			{

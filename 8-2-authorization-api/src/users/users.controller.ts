@@ -17,11 +17,10 @@ import { UserService } from './users.sevice';
 @injectable()
 export class UserController extends BaseController implements IUserController {
 	constructor(
-		@inject(TYPES.ILogger) private loggerService: ILogger,
 		@inject(TYPES.UserService) private userService: UserService,
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 	) {
-		super(loggerService);
+		super();
 		this.bindRoutes([
 			{
 				path: '/register',

@@ -8,7 +8,7 @@ import 'reflect-metadata';
 @injectable()
 export abstract class BaseController {
 	private readonly _router: Router;
-	constructor(private logger: ILogger) {
+	constructor() {
 		this._router = Router();
 	}
 	get router(): Router {
@@ -34,7 +34,6 @@ export abstract class BaseController {
 
 	protected bindRoutes(routes: IControllerRoute[]): void {
 		for (const route of routes) {
-			// this.logger.log(route.path);
 			const middlware = route.middleware?.map((m) => m.execute.bind(m));
 			const handler = route.function.bind(this);
 			const pipeline = middlware ? [...middlware, handler] : handler;
