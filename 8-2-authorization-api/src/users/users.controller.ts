@@ -4,7 +4,6 @@ import 'reflect-metadata';
 import { HttpError } from '../errors/http-error.class';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types/types';
-import { ILogger } from '../logger/logger.interface';
 import { IUserController } from './types/users.controller.interface';
 import { UserLoginDto } from './dto/user-login.dto';
 import { UserRegisterDto } from './dto/user-regiter.dto';
@@ -38,29 +37,25 @@ export class UserController extends BaseController implements IUserController {
 				path: '/delete',
 				method: 'delete',
 				function: this.delete,
-				// middleware: [new AuthGuard()],
-				// middleware: [new AuthGuard(this.userService, ['admin'])],
+				middleware: [new AuthGuard(['admin'])],
 			},
 			{
 				path: '/info',
 				method: 'get',
 				function: this.info,
-				// middleware: [new AuthGuard()],
-				// middleware: [new AuthGuard(this.userService, ['admin'])],
+				middleware: [new AuthGuard(['admin'])],
 			},
 			{
 				path: '/list',
 				method: 'get',
 				function: this.list,
-				// middleware: [new AuthGuard()],
-				// middleware: [new AuthGuard(this.userService, ['admin'])],
+				middleware: [new AuthGuard(['admin'])],
 			},
 			{
 				path: '/password',
 				method: 'post',
 				function: this.changePassword,
-				// middleware: [new AuthGuard()],
-				// middleware: [new AuthGuard(this.userService, ['admin'])],
+				middleware: [new AuthGuard(['admin'])],
 			},
 		]);
 	}

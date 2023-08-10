@@ -6,23 +6,20 @@ import { Role } from '../types/types';
 
 export class AuthMiddleware implements IMiddleware {
 	constructor(private secret: string, private userService: UserService) {}
-	execute(
+	async execute(
 		req: Request<{}, {}, { user: { name: string; email: string; type: Role } }>,
 		res: Response,
 		next: NextFunction,
-	): void {
+	): Promise<void> {
 		if (req.headers.authorization) {
 			verify(req.headers.authorization.split(' ')[1], this.secret, async (err, payload) => {
-				if (err) {
-					next();
-				} else if (payload) {
+				if (payload) {
 					const email = typeof payload == 'string' ? payload : payload.email;
 					req.user = await this.userService.getUserInfo(email);
 					next();
 				}
 			});
-		} else {
-			next();
 		}
+		next();
 	}
 }
