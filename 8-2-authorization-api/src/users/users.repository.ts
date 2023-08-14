@@ -4,7 +4,6 @@ import { User } from './user.entity';
 import { IUsersRepository } from './types/users.repository.interface';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types/types';
-import { AuthGuard } from '../common/auth.guard';
 
 @injectable()
 export class UsersRepository implements IUsersRepository {
@@ -23,8 +22,15 @@ export class UsersRepository implements IUsersRepository {
 	async find(email: string): Promise<UserModel | null> {
 		return this.prismaService.client.userModel.findFirst({ where: { email } });
 	}
-	async getList(): Promise<UserModel[] | null> {
-		return this.prismaService.client.userModel.findMany();
+	async getList(): Promise<{ id: number; email: string; name: string; type: string }[] | null> {
+		return this.prismaService.client.userModel.findMany({
+			select: {
+				id: true,
+				email: true,
+				name: true,
+				type: true,
+			},
+		});
 	}
 	async delete(email: string | string[]): Promise<UserModel | null> {
 		if (Array.isArray(email)) {

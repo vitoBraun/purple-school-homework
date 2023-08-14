@@ -52,7 +52,7 @@ export class App {
 			this.configService.get('JWT_SECRET'),
 			this.userService,
 		);
-		this.app.use(authMiddleware.execute.bind(authMiddleware));
+		this.app.use(await authMiddleware.execute.bind(authMiddleware));
 	}
 
 	useRoutes(): void {

@@ -57,7 +57,9 @@ export class UserService implements IUserService {
 		return this.usersRepository.find(email);
 	}
 
-	async getUsersList(): Promise<UserModel[] | null> {
+	async getUsersList(): Promise<
+		{ id: number; email: string; name: string; type: string }[] | null
+	> {
 		return this.usersRepository.getList();
 	}
 

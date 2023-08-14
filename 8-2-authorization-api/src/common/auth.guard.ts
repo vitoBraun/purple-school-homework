@@ -7,16 +7,17 @@ import { Role } from '../types/types';
 export class AuthGuard implements IMiddleware {
 	constructor(private allowedRoles: Role[] | 'allRoles') {}
 
-	execute(req: Request, res: Response, next: NextFunction): void {
-		console.log(req.user);
-		if (req.user) {
+	async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
+		// console.log(await req.user);
+		const user = await req.user;
+		if (user) {
 			if (this.allowedRoles === 'allRoles') {
 				next();
-			} else if (this.allowedRoles.includes(req.user.type)) {
+			} else if (this.allowedRoles.includes(user.type)) {
 				next();
 			}
+		} else {
+			res.status(401).send({ error: 'No permission' });
 		}
-
-		res.status(401).send({ error: 'No permission' });
 	}
 }
