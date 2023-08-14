@@ -14,12 +14,13 @@ export class ItemsRepository implements IItemsRepository {
 	constructor(@inject(TYPES.PrismaService) private prismaService: PrismaService) {}
 
 	async create(item: CreateItemDto): Promise<ItemModel> {
-		// const categories = await this.prismaService.client.categoryModel.findMany({
-		// 	where: { id: { in: item.categories } },
-		// });
-		// if (!categories.length) {
-		// 	throw new Error('Category not exists');
-		// }
+		const existingCategories = await this.prismaService.client.categoryModel.findMany();
+		const existingCategoryIds = existingCategories.map((category) => category.id);
+		item.categories.forEach((categoryId) => {
+			if (!existingCategoryIds.includes(categoryId)) {
+				throw new Error(`Category ${categoryId} does not exist`);
+			}
+		});
 
 		return await this.prismaService.client.itemModel.create({
 			data: {
