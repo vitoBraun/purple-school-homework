@@ -1,12 +1,11 @@
 import { inject, injectable } from 'inversify';
 
 import { PromoModel, UserModel } from '@prisma/client';
-import { IConfigService } from '../config/config.service.interface';
+
 import { IPromoRepository } from './types/promotions.repository.interface';
 import { Status, TYPES } from '../types/types';
 import { IPromoService } from './types/promotions.service.interface';
 import { Promo } from './promotions.entity';
-import { QueryFormatter } from '../common/query-formatter.middleware';
 
 @injectable()
 export class PromoService implements IPromoService {
