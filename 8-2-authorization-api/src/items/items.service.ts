@@ -17,8 +17,8 @@ export class ItemsService implements IItemsService {
 	async getCategories(): Promise<CategoryModel[] | []> {
 		return await this.itemsRepository.getCategories();
 	}
-	async getItems(params: Request['query']): Promise<ItemModel[] | []> {
-		return await this.itemsRepository.getItems(params);
+	async getItems(): Promise<ItemModel[] | []> {
+		return await this.itemsRepository.getItems();
 	}
 	async editItem(itemInfo: EditItemDto): Promise<ItemModel> {
 		return await this.itemsRepository.editItem(itemInfo);

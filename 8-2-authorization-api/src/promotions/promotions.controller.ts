@@ -11,7 +11,6 @@ import { EditPromoDto } from './dto/promotion.dto';
 import { IPromoService } from './types/promotions.service.interface';
 import { HttpError } from '../errors/http-error.class';
 import { UserService } from '../users/users.sevice';
-import { QueryOptions } from './types/promotions.types';
 
 @injectable()
 export class PromoController extends BaseController implements IPromoController {
@@ -120,12 +119,9 @@ export class PromoController extends BaseController implements IPromoController 
 
 	async list(req: Request, res: Response): Promise<void> {
 		const user = await req.user;
-		// const isAdmin = user.type === 'admin';
-		// const emailCondition = isAdmin ? undefined : user.email;
 
 		const result = await this.promoService.getPromoList({
 			user,
-			// params: req.query,
 		});
 		this.ok(res, result);
 	}

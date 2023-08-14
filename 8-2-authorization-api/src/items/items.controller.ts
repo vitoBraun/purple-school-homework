@@ -31,7 +31,7 @@ export class ItemsController extends BaseController implements IItemsController 
 				path: '/category',
 				method: 'post',
 				function: this.createCategory,
-				middleware: [new AuthGuard('allRoles')],
+				middleware: [new AuthGuard(['admin', 'storeAdministrator'])],
 			},
 			{
 				path: '/categories',
@@ -94,8 +94,7 @@ export class ItemsController extends BaseController implements IItemsController 
 		this.ok(res, result);
 	}
 	async getItems(req: Request, res: Response, next: NextFunction): Promise<void> {
-		const params = req.query;
-		const result = await this.itemsService.getItems(params);
+		const result = await this.itemsService.getItems();
 		this.ok(res, result);
 	}
 }

@@ -5,14 +5,12 @@ import { Role } from '../types/types';
 
 @injectable()
 export class AuthGuard implements IMiddleware {
-	constructor(private allowedRoles: Role[] | 'allRoles') {}
+	constructor(private allowedRoles: Role[]) {}
 
 	async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
 		const user = await req.user;
 		if (user) {
-			if (this.allowedRoles === 'allRoles') {
-				next();
-			} else if (this.allowedRoles.includes(user.type)) {
+			if (this.allowedRoles.includes(user.type)) {
 				next();
 			} else {
 				res.status(401).send({ error: 'No permission' });

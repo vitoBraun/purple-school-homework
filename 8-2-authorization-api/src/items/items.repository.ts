@@ -8,73 +8,73 @@ import { PrismaService } from '../database/prisma.service';
 import { CreateItemDto, EditItemDto } from './dto/create-Item.dto';
 
 import { ItemsWithCategories } from './types/types';
-import { QueryFormatter } from '../common/query-formatter.middleware';
 
 @injectable()
 export class ItemsRepository implements IItemsRepository {
 	constructor(@inject(TYPES.PrismaService) private prismaService: PrismaService) {}
 
 	async create(item: CreateItemDto): Promise<ItemModel> {
-		const categories = await this.prismaService.client.categoryModel.findMany({
-			where: { name: { in: item.categories } },
-		});
-		if (categories.length === 0) {
-			throw new Error('Category not exist');
-		}
+		// const categories = await this.prismaService.client.categoryModel.findMany({
+		// 	where: { id: { in: item.categories } },
+		// });
+		// if (!categories.length) {
+		// 	throw new Error('Category not exists');
+		// }
 
-		const newItem = await this.prismaService.client.itemModel.create({
+		return await this.prismaService.client.itemModel.create({
 			data: {
 				name: item.name,
 				description: item.description,
 				price: item.price,
 				storeCount: item.storeCount,
-				categories: { connect: categories.map((category) => ({ id: category.id })) },
+				categories: {
+					connect: item.categories.map((categoryId) => ({ id: categoryId })),
+				},
 			},
 			include: {
 				categories: true,
 			},
 		});
-		return newItem;
 	}
 
 	async createCategory(name: string): Promise<CategoryModel | never> {
-		const newItem = await this.prismaService.client.categoryModel.create({
+		return await this.prismaService.client.categoryModel.create({
 			data: {
 				name,
 			},
 		});
-		return newItem;
 	}
 	async getCategories(): Promise<CategoryModel[] | []> {
-		const categories = await this.prismaService.client.categoryModel.findMany();
-		return categories;
+		return await this.prismaService.client.categoryModel.findMany();
 	}
 	async editItem(itemInfo: EditItemDto): Promise<ItemModel> {
-		const categories = await this.prismaService.client.categoryModel.findMany({
-			where: { name: { in: itemInfo.categories } },
-		});
+		// const categories = await this.prismaService.client.categoryModel.findMany({
+		// 	where: { name: { in: itemInfo.categories } },
+		// });
 
-		if (categories.length === 0) {
-			throw new Error('Category not exist');
-		}
+		// if (categories.length === 0) {
+		// 	throw new Error('Category not exist');
+		// }
 		const data = {
 			...itemInfo,
 			...(itemInfo.categories && {
-				categories: { set: categories.map((category) => ({ id: category.id })) },
+				categories: { set: itemInfo.categories.map((categoryId) => ({ id: categoryId })) },
 			}),
 		};
-		const existingItem = await this.prismaService.client.itemModel.update({
+		return await this.prismaService.client.itemModel.update({
 			where: { id: itemInfo.id },
 			data,
 			include: {
 				categories: true,
 			},
 		});
-		return existingItem;
 	}
 
-	async getItems(params: any): Promise<ItemsWithCategories[] | []> {
-		const items = await this.prismaService.client.itemModel.findMany(params);
-		return items;
+	async getItems(): Promise<ItemsWithCategories[] | []> {
+		return await this.prismaService.client.itemModel.findMany({
+			include: {
+				categories: true,
+			},
+		});
 	}
 }

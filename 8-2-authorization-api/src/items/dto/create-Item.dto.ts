@@ -12,7 +12,7 @@ export class CreateItemDto {
 	@MaxLength(50)
 	storeCount: number;
 
-	categories: string[];
+	categories: number[];
 }
 
 export class EditItemDto {
@@ -29,5 +29,5 @@ export class EditItemDto {
 	@MaxLength(50)
 	storeCount: number;
 
-	categories: string[];
+	categories: number[];
 }
