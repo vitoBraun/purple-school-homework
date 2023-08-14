@@ -4,9 +4,6 @@ import 'reflect-metadata';
 
 import { inject, injectable } from 'inversify';
 import { Status, TYPES, statusNames } from '../types/types';
-import { ILogger } from '../logger/logger.interface';
-
-import { IConfigService } from '../config/config.service.interface';
 
 import { IPromoController } from './types/promotions.controller.interface';
 import { AuthGuard } from '../common/auth.guard';
@@ -15,7 +12,6 @@ import { IPromoService } from './types/promotions.service.interface';
 import { HttpError } from '../errors/http-error.class';
 import { UserService } from '../users/users.sevice';
 import { QueryOptions } from './types/promotions.types';
-import { QueryFormatter } from '../common/query-formatter.middleware';
 
 @injectable()
 export class PromoController extends BaseController implements IPromoController {
@@ -29,37 +25,37 @@ export class PromoController extends BaseController implements IPromoController 
 				path: '/create',
 				method: 'post',
 				function: this.create,
-				// middleware: [new AuthGuard()],
+				middleware: [new AuthGuard(['provider', 'storeAdministrator'])],
 			},
 			{
 				path: '/edit',
 				method: 'post',
 				function: this.edit,
-				// middleware: [new AuthGuard()],
+				middleware: [new AuthGuard(['storeAdministrator'])],
 			},
 			{
 				path: '/status',
 				method: 'patch',
 				function: this.changeStatus,
-				// middleware: [new AuthGuard()],
+				middleware: [new AuthGuard(['storeAdministrator'])],
 			},
 			{
 				path: '/delete',
 				method: 'delete',
 				function: this.delete,
-				// middleware: [new AuthGuard()],
+				middleware: [new AuthGuard(['storeAdministrator'])],
 			},
 			{
 				path: '/list',
 				method: 'get',
 				function: this.list,
-				// middleware: [new QueryFormatter(this.userService), new AuthGuard()],
+				middleware: [new AuthGuard(['provider', 'storeAdministrator'])],
 			},
 		]);
 	}
 
 	async create(req: Request, res: Response, next: NextFunction): Promise<void> {
-		const { user } = req;
+		const user = await req.user;
 		const { title, description } = req.body;
 		if (!title || !description) {
 			return next(new HttpError(422, 'Incorrect data'));

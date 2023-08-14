@@ -12,10 +12,7 @@ import { QueryFormatter } from '../common/query-formatter.middleware';
 
 @injectable()
 export class ItemsRepository implements IItemsRepository {
-	constructor(
-		@inject(TYPES.PrismaService) private prismaService: PrismaService,
-		@inject(TYPES.QueryFormatter) private queryFormatter: QueryFormatter,
-	) {}
+	constructor(@inject(TYPES.PrismaService) private prismaService: PrismaService) {}
 
 	async create(item: CreateItemDto): Promise<ItemModel> {
 		const categories = await this.prismaService.client.categoryModel.findMany({

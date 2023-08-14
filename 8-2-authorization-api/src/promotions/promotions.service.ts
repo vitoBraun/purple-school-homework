@@ -22,7 +22,7 @@ export class PromoService implements IPromoService {
 	}: {
 		title: string;
 		description: string;
-		user: string;
+		user: UserModel;
 	}): Promise<PromoModel | null> {
 		const newPromo = new Promo(title, description);
 		return await this.promoRepository.create(newPromo, user);

@@ -46,13 +46,13 @@ export class App {
 		this.port = Number(this.configService.get('PORT')) || 8000;
 	}
 
-	async useMiddleware(): Promise<void> {
+	useMiddleware(): void {
 		this.app.use(json());
-		const authMiddleware = await new AuthMiddleware(
+		const authMiddleware = new AuthMiddleware(
 			this.configService.get('JWT_SECRET'),
 			this.userService,
 		);
-		this.app.use(await authMiddleware.execute.bind(authMiddleware));
+		this.app.use(authMiddleware.execute.bind(authMiddleware));
 	}
 
 	useRoutes(): void {
@@ -66,7 +66,7 @@ export class App {
 	}
 
 	public async init(): Promise<void> {
-		await this.useMiddleware();
+		this.useMiddleware();
 		this.useRoutes();
 		this.useExeptionFilters();
 		await this.prismaService.connect();

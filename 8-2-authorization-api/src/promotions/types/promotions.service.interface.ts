@@ -1,9 +1,9 @@
-import { PromoModel } from '@prisma/client';
+import { PromoModel, UserModel } from '@prisma/client';
 import { CreatePromoDto } from '../dto/promotion.dto';
 import { Status } from '../../types/types';
 
 class ExtendedCreatePromoDto extends CreatePromoDto {
-	user: string;
+	user: UserModel;
 }
 
 export interface IPromoService {

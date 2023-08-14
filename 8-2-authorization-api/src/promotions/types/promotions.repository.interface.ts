@@ -1,9 +1,9 @@
-import { PromoModel } from '@prisma/client';
+import { PromoModel, UserModel } from '@prisma/client';
 import { Promo } from '../promotions.entity';
 import { Status } from '../../types/types';
 
 export interface IPromoRepository {
-	create: (promo: Promo, user: string) => Promise<PromoModel | null>;
+	create: (promo: Promo, user: UserModel) => Promise<PromoModel | null>;
 	edit: (promo: { title: string; description: string; id: number }) => Promise<PromoModel>;
 	delete: (id: number) => Promise<PromoModel | null>;
 	getList: ({

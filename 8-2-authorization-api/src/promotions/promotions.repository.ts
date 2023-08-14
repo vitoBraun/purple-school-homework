@@ -1,31 +1,22 @@
-import { UsersRepository } from './../users/users.repository';
 import { PrismaService } from './../database/prisma.service';
-import { PromoModel } from '@prisma/client';
+import { PromoModel, UserModel } from '@prisma/client';
 
 import { inject, injectable } from 'inversify';
 import { Status, TYPES } from '../types/types';
 import { IPromoRepository } from './types/promotions.repository.interface';
 import { Promo } from './promotions.entity';
-import { QueryFormatter } from '../common/query-formatter.middleware';
-import { UserService } from '../users/users.sevice';
 
 @injectable()
 export class PromoRepository implements IPromoRepository {
-	constructor(
-		@inject(TYPES.PrismaService) private prismaService: PrismaService,
-		@inject(TYPES.QueryFormatter) private queryFormatter: QueryFormatter,
-		@inject(TYPES.UserService) private usersService: UserService,
-	) {}
+	constructor(@inject(TYPES.PrismaService) private prismaService: PrismaService) {}
 
-	async create({ title, description }: Promo, user: string): Promise<PromoModel | null> {
-		const userInfo = await this.usersService.getUserInfo(user);
-		console.log(userInfo);
-		if (!userInfo) {
+	async create({ title, description }: Promo, user: UserModel): Promise<PromoModel | null> {
+		if (!user) {
 			throw new Error(`User not found`);
 		}
 
 		return this.prismaService.client.promoModel.create({
-			data: { title, description, creatorId: userInfo?.id, creatorEmail: userInfo?.email },
+			data: { title, description, creatorId: user?.id, creatorEmail: user?.email },
 		});
 	}
 
