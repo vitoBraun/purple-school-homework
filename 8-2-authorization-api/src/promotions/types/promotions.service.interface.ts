@@ -20,10 +20,10 @@ export interface IPromoService {
 	deletePromo: (id: number, email?: string) => Promise<PromoModel | null>;
 	updatePromoStatus: (id: number, status: Status) => Promise<PromoModel | null>;
 	getPromoList: ({
-		userEmail,
-		params,
-	}: {
-		userEmail?: string;
-		params: Record<string, any>;
+		user,
+	}: // params,
+	{
+		user: UserModel;
+		// params: Record<string, any>;
 	}) => Promise<PromoModel[] | null>;
 }

@@ -10,11 +10,7 @@ import { QueryFormatter } from '../common/query-formatter.middleware';
 
 @injectable()
 export class PromoService implements IPromoService {
-	constructor(
-		@inject(TYPES.ConfigService) private configService: IConfigService,
-		@inject(TYPES.PromoRepository) private promoRepository: IPromoRepository,
-		@inject(TYPES.QueryFormatter) private queryFormatter: QueryFormatter,
-	) {}
+	constructor(@inject(TYPES.PromoRepository) private promoRepository: IPromoRepository) {}
 	async createPromo({
 		title,
 		description,
@@ -50,15 +46,12 @@ export class PromoService implements IPromoService {
 		return deletedExistePromo;
 	}
 
-	async getPromoList({
-		userEmail,
-		params,
-	}: {
-		userEmail?: string;
-		params: Record<string, any>;
-	}): Promise<PromoModel[] | null> {
-		const list = await this.promoRepository.getList({ params, userEmail });
-		return list;
+	async getPromoList({ user }: { user: UserModel }): Promise<PromoModel[] | null> {
+		if (user.type === 'storeAdministrator') {
+			return await this.promoRepository.getList();
+		} else {
+			return await this.promoRepository.getListByCreatorId(user.id);
+		}
 	}
 	async updatePromoStatus(id: number, status: Status): Promise<PromoModel | null> {
 		const existingPromo = await this.promoRepository.find(id);

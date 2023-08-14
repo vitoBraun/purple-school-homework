@@ -43,24 +43,14 @@ export class PromoRepository implements IPromoRepository {
 			where: { id },
 		});
 	}
-	async getList({
-		userEmail,
-		params,
-	}: {
-		userEmail?: string;
-		params: any;
-	}): Promise<PromoModel[] | null> {
-		if (!userEmail) {
-			return this.prismaService.client.promoModel.findMany(params);
-		} else {
-			const creatorId = await this.getCreatorId(userEmail);
-			if (!creatorId) {
-				return null;
-			}
-
-			return this.prismaService.client.promoModel.findMany(params);
-		}
+	async getList(): Promise<PromoModel[] | null> {
+		return this.prismaService.client.promoModel.findMany();
 	}
+
+	async getListByCreatorId(id: number): Promise<PromoModel[] | null> {
+		return this.prismaService.client.promoModel.findMany({ where: { creatorId: id } });
+	}
+
 	async find(id: number, email?: string): Promise<PromoModel | null> {
 		const creatorId = email ? await this.getCreatorId(email) : undefined;
 		return this.prismaService.client.promoModel.findFirst({
