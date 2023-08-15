@@ -65,8 +65,10 @@ export class ItemsController extends BaseController implements IItemsController 
 			const item: CreateItemDto = req.body;
 			const result = await this.itemsService.createItem(item);
 			this.ok(res, result);
-		} catch (error: any) {
-			this.exeptionFilter.catch(error, req, res, next);
+		} catch (error) {
+			if (error instanceof Error) {
+				this.exeptionFilter.catch(error, req, res, next);
+			}
 		}
 	}
 	async createCategory(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -83,14 +85,19 @@ export class ItemsController extends BaseController implements IItemsController 
 			const itemInfo: EditItemDto = req.body;
 			const result = await this.itemsService.editItem(itemInfo);
 			this.ok(res, result);
-		} catch (error: any) {
-			this.exeptionFilter.catch(error, req, res, next);
+		} catch (error) {
+			if (error instanceof Error) {
+				this.exeptionFilter.catch(error, req, res, next);
+			}
 		}
 	}
-	async changeCount(req: Request, res: Response, next: NextFunction): Promise<void> {
-		const { id, storeCount }: { id: number; storeCount: number } = req.body;
-		const itemInfo = { id, storeCount };
-		const result = await this.itemsService.editItem(itemInfo as any);
+	async changeCount(
+		req: Request<{}, {}, EditItemDto>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
+		const itemInfo = req.body;
+		const result = await this.itemsService.editItem(itemInfo);
 		this.ok(res, result);
 	}
 	async getItems(req: Request, res: Response, next: NextFunction): Promise<void> {

@@ -32,8 +32,7 @@ export class PromoService implements IPromoService {
 		title: string;
 		description: string;
 	}): Promise<PromoModel | null> {
-		const editedPromo = await this.promoRepository.edit({ id, title, description });
-		return editedPromo;
+		return await this.promoRepository.edit({ id, title, description });
 	}
 
 	async deletePromo(id: number, email?: string): Promise<PromoModel | null> {
@@ -41,8 +40,7 @@ export class PromoService implements IPromoService {
 		if (!existingPromo) {
 			return null;
 		}
-		const deletedExistePromo = await this.promoRepository.delete(id);
-		return deletedExistePromo;
+		return await this.promoRepository.delete(id);
 	}
 
 	async getPromoList({ user }: { user: UserModel }): Promise<PromoModel[] | null> {

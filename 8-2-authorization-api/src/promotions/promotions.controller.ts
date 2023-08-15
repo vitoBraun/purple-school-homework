@@ -86,10 +86,9 @@ export class PromoController extends BaseController implements IPromoController 
 		next: NextFunction,
 	): Promise<void> {
 		const { id, status } = req.body;
-		const inValidRequest =
-			!id || !status || !Object.prototype.hasOwnProperty.call(statusNames, status);
+		const inValidRequest = !id || !status || !Object.keys(statusNames).includes(status);
 		if (inValidRequest) {
-			return next(new HttpError(422, 'Incorrect data'));
+			return next(new HttpError(422, 'Promo Id or status is incorrect'));
 		}
 		const result = await this.promoService.updatePromoStatus(id, status);
 		if (!result) {
@@ -98,19 +97,15 @@ export class PromoController extends BaseController implements IPromoController 
 		this.ok(res, result);
 	}
 
-	async delete(
-		req: Request<{}, {}, { id: number }>,
-		res: Response,
-		next: NextFunction,
-	): Promise<void> {
+	async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
 		const { id } = req.body;
-		const { user } = req;
-		const isAdmin = await this.userService.validateAdmin(user);
+		const user = await req.user;
+		const isAdmin = user.type === 'admin';
 		if (!id) {
 			return next(new HttpError(422, 'Promo Id has not been provided'));
 		}
 
-		const result = await this.promoService.deletePromo(id, isAdmin ? undefined : user);
+		const result = await this.promoService.deletePromo(id, isAdmin ? undefined : user.email);
 		if (!result) {
 			return next(new HttpError(422, 'Promo does not exist!'));
 		}
