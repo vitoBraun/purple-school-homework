@@ -49,13 +49,6 @@ export class ItemsRepository implements IItemsRepository {
 		return await this.prismaService.client.categoryModel.findMany();
 	}
 	async editItem(itemInfo: EditItemDto): Promise<ItemModel> {
-		// const categories = await this.prismaService.client.categoryModel.findMany({
-		// 	where: { name: { in: itemInfo.categories } },
-		// });
-
-		// if (categories.length === 0) {
-		// 	throw new Error('Category not exist');
-		// }
 		const data = {
 			...itemInfo,
 			...(itemInfo.categories && {
