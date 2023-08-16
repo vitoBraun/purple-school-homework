@@ -8,7 +8,7 @@ export class AuthGuard implements IMiddleware {
 	constructor(private allowedRoles: Role[]) {}
 
 	async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
-		const user = await req.user;
+		const user = req.user;
 		if (user) {
 			if (this.allowedRoles.includes(user.type)) {
 				next();

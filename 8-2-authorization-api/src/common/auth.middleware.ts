@@ -6,19 +6,32 @@ import { Role } from '../types/types';
 
 export class AuthMiddleware implements IMiddleware {
 	constructor(private secret: string, private userService: UserService) {}
-	execute(
+	async execute(
 		req: Request<{}, {}, { user: { name: string; email: string; type: Role } }>,
 		res: Response,
 		next: NextFunction,
-	): void {
+	): Promise<void> {
 		if (req.headers.authorization) {
-			verify(req.headers.authorization.split(' ')[1], this.secret, (err, payload) => {
-				if (payload) {
-					const email = typeof payload == 'string' ? payload : payload.email;
-					req.user = this.userService.getUserInfo(email);
-				}
-			});
+			const getEmail = (): Promise<string> =>
+				new Promise((resolve, reject) => {
+					const token = req.headers.authorization?.split(' ')[1];
+					if (token)
+						verify(token, this.secret, (err, payload) => {
+							if (payload) {
+								const email = typeof payload == 'string' ? payload : payload.email;
+								resolve(email);
+							}
+						});
+					reject('Could not get email while auth');
+				});
+			getEmail()
+				.then(async (email) => {
+					req.user = await this.userService.getUserInfo(email);
+					next();
+				})
+				.catch(() => {
+					next();
+				});
 		}
-		next();
 	}
 }
