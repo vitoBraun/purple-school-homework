@@ -4,7 +4,7 @@ import { PromoModel, UserModel } from '@prisma/client';
 
 import { IPromoRepository } from './types/promotions.repository.interface';
 import { Status, TYPES } from '../types/types';
-import { IPromoService } from './types/promotions.service.interface';
+import { EditPromoParams, IPromoService } from './types/promotions.service.interface';
 import { Promo } from './promotions.entity';
 
 @injectable()
@@ -23,15 +23,7 @@ export class PromoService implements IPromoService {
 		return await this.promoRepository.create(newPromo, user);
 	}
 
-	async editPromo({
-		id,
-		title,
-		description,
-	}: {
-		id: number;
-		title: string;
-		description: string;
-	}): Promise<PromoModel | null> {
+	async editPromo({ id, title, description }: EditPromoParams): Promise<PromoModel | null> {
 		return await this.promoRepository.edit({ id, title, description });
 	}
 

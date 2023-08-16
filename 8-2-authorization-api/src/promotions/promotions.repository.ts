@@ -5,6 +5,7 @@ import { inject, injectable } from 'inversify';
 import { Status, TYPES } from '../types/types';
 import { IPromoRepository } from './types/promotions.repository.interface';
 import { Promo } from './promotions.entity';
+import { EditPromoParams } from './types/promotions.service.interface';
 
 @injectable()
 export class PromoRepository implements IPromoRepository {
@@ -20,15 +21,7 @@ export class PromoRepository implements IPromoRepository {
 		});
 	}
 
-	async edit({
-		title,
-		description,
-		id,
-	}: {
-		title: string;
-		description: string;
-		id: number;
-	}): Promise<PromoModel> {
+	async edit({ title, description, id }: EditPromoParams): Promise<PromoModel> {
 		return this.prismaService.client.promoModel.update({
 			where: { id },
 			data: { title, description },

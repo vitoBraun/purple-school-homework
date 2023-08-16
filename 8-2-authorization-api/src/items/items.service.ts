@@ -4,7 +4,7 @@ import { IItemsRepository } from './types/items.repository.interface';
 import { IItemsService } from './types/items.service.interface';
 import { CategoryModel, ItemModel } from '@prisma/client';
 import { CreateItemDto, EditItemDto } from './dto/create-Item.dto';
-import { Request } from 'express';
+
 @injectable()
 export class ItemsService implements IItemsService {
 	constructor(@inject(TYPES.ItemsRepository) private itemsRepository: IItemsRepository) {}
