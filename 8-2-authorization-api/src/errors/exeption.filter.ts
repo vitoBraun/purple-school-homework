@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { IExeptionFilter } from './exeption.filter.interface';
 import { HttpError } from './http-error.class';
 import { ILogger } from '../logger/logger.interface';
-import { TYPES } from '../users/types/types';
+import { TYPES } from '../types/types';
 import { injectable, inject } from 'inversify';
 
 @injectable()

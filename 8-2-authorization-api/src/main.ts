@@ -1,9 +1,10 @@
+import { IItemsController } from './items/types/items.controller.interface';
 import { Container, ContainerModule, interfaces } from 'inversify';
 import { App } from './app';
 import { ExecptionFilter } from './errors/exeption.filter';
 import { LoggerService } from './logger/logger.service';
 import { ILogger } from './logger/logger.interface';
-import { TYPES } from './users/types/types';
+import { TYPES } from './types/types';
 import { UserController } from './users/users.controller';
 import { IExeptionFilter } from './errors/exeption.filter.interface';
 import { IUserController } from './users/types/users.controller.interface';
@@ -14,6 +15,17 @@ import { ConfigService } from './config/config.service';
 import { PrismaService } from './database/prisma.service';
 import { UsersRepository } from './users/users.repository';
 import { IUsersRepository } from './users/types/users.repository.interface';
+import { IPromoRepository } from './promotions/types/promotions.repository.interface';
+import { PromoRepository } from './promotions/promotions.repository';
+import { IPromoService } from './promotions/types/promotions.service.interface';
+import { PromoService } from './promotions/promotions.service';
+import { IPromoController } from './promotions/types/promotions.controller.interface';
+import { PromoController } from './promotions/promotions.controller';
+import { IItemsService } from './items/types/items.service.interface';
+import { ItemsController } from './items/items.controller';
+import { ItemsRepository } from './items/items.repository';
+import { ItemsService } from './items/items.service';
+import { IItemsRepository } from './items/types/items.repository.interface';
 
 export interface IBootsrapReturn {
 	appContainer: Container;
@@ -28,6 +40,12 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
 	bind<IConfigService>(TYPES.ConfigService).to(ConfigService).inSingletonScope();
 	bind<PrismaService>(TYPES.PrismaService).to(PrismaService).inSingletonScope();
 	bind<IUsersRepository>(TYPES.UsersRepository).to(UsersRepository).inSingletonScope();
+	bind<IPromoController>(TYPES.PromoController).to(PromoController).inSingletonScope();
+	bind<IPromoService>(TYPES.PromoService).to(PromoService).inSingletonScope();
+	bind<IPromoRepository>(TYPES.PromoRepository).to(PromoRepository).inSingletonScope();
+	bind<IItemsRepository>(TYPES.ItemsRepository).to(ItemsRepository).inSingletonScope();
+	bind<IItemsController>(TYPES.ItemsController).to(ItemsController).inSingletonScope();
+	bind<IItemsService>(TYPES.ItemsService).to(ItemsService).inSingletonScope();
 	bind<App>(TYPES.Application).to(App);
 });
 
