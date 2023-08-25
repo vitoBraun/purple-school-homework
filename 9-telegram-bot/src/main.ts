@@ -34,8 +34,17 @@ testScene.leave((ctx) => {
 
 const stage = new Scenes.Stage<MyContext>([testScene]);
 
-const bot = new Telegraf(token);
+const bot = new Telegraf<MyContext>(token);
 
 bot.use(new LocalSession({ database: "session.json" }).middleware());
 bot.use(stage.middleware());
+
+bot.use((ctx, next) => {
+  ctx.session.myProp;
+  ctx.scene.session.mtProps;
+  next();
+});
+bot.command("test", (ctx) => {
+  ctx.scene.enter("test");
+});
 bot.launch();
