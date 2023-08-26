@@ -1,10 +1,15 @@
+import { PrismaClient } from "@prisma/client";
 import "dotenv/config";
 import { Context, Markup, Scenes, Telegraf } from "telegraf";
 import LocalSession from "telegraf-session-local";
+import { PrismaService } from "./database/prisma.service";
 const token = process.env.TOKEN;
 const { leave } = Scenes.Stage;
 
 if (!token) throw new Error("Токен не задан");
+
+const db = new PrismaService();
+db.connect();
 
 interface MySessionScene extends Scenes.SceneSessionData {
   mtProps: string;
@@ -20,16 +25,16 @@ interface MyContext extends Context {
   scene: Scenes.SceneContextScene<MyContext, MySessionScene>;
 }
 
-const testScene = new Scenes.BaseScene<MyContext>("test");
+const testScene = new Scenes.BaseScene<MyContext>("welcome");
 testScene.enter((ctx) => {
-  ctx.reply("Hi!");
+  ctx.reply("Привет это бот для интернет магазина!");
 });
 testScene.command("back", leave<MyContext>());
 testScene.on("text", (ctx) => {
-  ctx.reply(ctx.message.text);
+  ctx.reply(`Вы написали: "${ctx.message.text}"`);
 });
 testScene.leave((ctx) => {
-  ctx.reply("Bye!");
+  ctx.reply("До свидания!");
 });
 
 const stage = new Scenes.Stage<MyContext>([testScene]);
@@ -44,7 +49,7 @@ bot.use((ctx, next) => {
   ctx.scene.session.mtProps;
   next();
 });
-bot.command("test", (ctx) => {
-  ctx.scene.enter("test");
+bot.command("start", (ctx) => {
+  ctx.scene.enter("welcome");
 });
 bot.launch();

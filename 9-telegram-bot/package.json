@@ -11,9 +11,11 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.5.0",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "prisma": "^5.2.0"
   },
   "dependencies": {
+    "@prisma/client": "^5.2.0",
     "dotenv": "^16.3.1",
     "telegraf": "^4.12.2",
     "telegraf-session-local": "^2.1.1",
