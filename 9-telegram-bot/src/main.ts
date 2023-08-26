@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
 import "dotenv/config";
-import { Context, Markup, Scenes, Telegraf } from "telegraf";
+import { Context, Scenes, Telegraf } from "telegraf";
 import LocalSession from "telegraf-session-local";
 import { PrismaService } from "./database/prisma.service";
 const token = process.env.TOKEN;
