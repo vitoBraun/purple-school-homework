@@ -43,11 +43,6 @@ const bot = new Telegraf<MyContext>(token);
 bot.use(new LocalSession({ database: "session.json" }).middleware());
 bot.use(stage.middleware());
 
-bot.use((ctx, next) => {
-  ctx.session.myProp;
-  ctx.scene.session.mtProps;
-  next();
-});
 bot.command("start", (ctx) => {
   ctx.scene.enter("welcome");
 });
