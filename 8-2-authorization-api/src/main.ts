@@ -26,6 +26,8 @@ import { ItemsController } from './items/items.controller';
 import { ItemsRepository } from './items/items.repository';
 import { ItemsService } from './items/items.service';
 import { IItemsRepository } from './items/types/items.repository.interface';
+import { TelegramBotService } from './telegram-bot/telegram-bot.service';
+import { ITelegramBotService } from './telegram-bot/types/telegram-bot.service.interface';
 
 export interface IBootsrapReturn {
 	appContainer: Container;
@@ -46,6 +48,7 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
 	bind<IItemsRepository>(TYPES.ItemsRepository).to(ItemsRepository).inSingletonScope();
 	bind<IItemsController>(TYPES.ItemsController).to(ItemsController).inSingletonScope();
 	bind<IItemsService>(TYPES.ItemsService).to(ItemsService).inSingletonScope();
+	bind<ITelegramBotService>(TYPES.TelegramBotService).to(TelegramBotService).inSingletonScope();
 	bind<App>(TYPES.Application).to(App);
 });
 
@@ -53,7 +56,9 @@ async function bootstrap(): Promise<IBootsrapReturn> {
 	const appContainer = new Container();
 	appContainer.load(appBindings);
 	const app = appContainer.get<App>(TYPES.Application);
+	const telegramBot = appContainer.get<ITelegramBotService>(TYPES.TelegramBotService);
 	await app.init();
+	await telegramBot.init();
 	return { app, appContainer };
 }
 
