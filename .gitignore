@@ -2,3 +2,5 @@
 trash
 node_modules
 .env
+session.json
+dist
