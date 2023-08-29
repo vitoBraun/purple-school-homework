@@ -6,8 +6,9 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../types/types';
 import LocalSession from 'telegraf-session-local';
 import { MyContext } from './types/types';
-import { testScene } from './scenes/test.scene';
+import { welcomeScene } from './scenes/welcome.scene';
 import { ITelegramBotService } from './types/telegram-bot.service.interface';
+import { menuScene } from './scenes/menu.scene';
 
 @injectable()
 export class TelegramBotService implements ITelegramBotService {
@@ -21,9 +22,11 @@ export class TelegramBotService implements ITelegramBotService {
 		@inject(TYPES.ItemsRepository) private ItemsRepository: ItemsRepository,
 	) {
 		this.token = this.configService.get('TOKEN');
+
 		this.bot = new Telegraf<MyContext>(this.token);
-		this.stage = new Scenes.Stage<MyContext>([testScene]);
 		this.bot.use(new LocalSession({ database: 'session.json' }).middleware());
+
+		this.stage = new Scenes.Stage<MyContext>([welcomeScene, menuScene]);
 		this.bot.use(this.stage.middleware());
 
 		this.bot.command('start', (ctx) => {
