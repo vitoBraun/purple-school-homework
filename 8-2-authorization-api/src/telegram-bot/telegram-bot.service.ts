@@ -6,9 +6,9 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../types/types';
 import LocalSession from 'telegraf-session-local';
 import { MyContext } from './types/types';
-import { welcomeScene } from './scenes/welcome.scene';
+
 import { ITelegramBotService } from './types/telegram-bot.service.interface';
-import { menuScene } from './scenes/menu.scene';
+import { ChatScenes } from './scenes/chat.scenes';
 
 @injectable()
 export class TelegramBotService implements ITelegramBotService {
@@ -19,18 +19,24 @@ export class TelegramBotService implements ITelegramBotService {
 	constructor(
 		@inject(TYPES.ConfigService) private configService: ConfigService,
 		@inject(TYPES.ILogger) private loggerService: LoggerService,
-		@inject(TYPES.ItemsRepository) private ItemsRepository: ItemsRepository,
+		@inject(TYPES.ChatScenes) private chatScenes: ChatScenes,
 	) {
 		this.token = this.configService.get('TOKEN');
 
 		this.bot = new Telegraf<MyContext>(this.token);
 		this.bot.use(new LocalSession({ database: 'session.json' }).middleware());
 
-		this.stage = new Scenes.Stage<MyContext>([welcomeScene, menuScene]);
+		this.stage = new Scenes.Stage<MyContext>([
+			this.chatScenes.welcomeScene,
+			this.chatScenes.menuScene,
+		]);
 		this.bot.use(this.stage.middleware());
 
 		this.bot.command('start', (ctx) => {
 			ctx.scene.enter('welcome');
+		});
+		this.bot.command('menu', (ctx) => {
+			ctx.scene.enter('menu');
 		});
 	}
 	init(): void {
