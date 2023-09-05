@@ -8,8 +8,10 @@ import { MyContext } from './types/types';
 
 import { ITelegramBotService } from './types/telegram-bot.service.interface';
 import { ChatScenes } from './scenes/chat.scenes';
+import { WelcomeScene } from './scenes/welcome/welcome.scene';
+import { MenuScene } from './scenes/menu/menu.scene';
 
-export enum ScenesEnum {
+export enum ScenesNames {
 	WELCOME = 'welcome',
 	MENU = 'menu',
 }
@@ -23,24 +25,22 @@ export class TelegramBotService implements ITelegramBotService {
 	constructor(
 		@inject(TYPES.ConfigService) private configService: ConfigService,
 		@inject(TYPES.ILogger) private loggerService: LoggerService,
-		@inject(TYPES.ChatScenes) private chatScenes: ChatScenes,
+		@inject(TYPES.WelcomeScene) private welcomeScene: WelcomeScene,
+		@inject(TYPES.MenuScene) private menuScene: MenuScene,
 	) {
 		this.token = this.configService.get('TOKEN');
 
 		this.bot = new Telegraf<MyContext>(this.token);
 		this.bot.use(new LocalSession({ database: 'session.json' }).middleware());
 
-		this.stage = new Scenes.Stage<MyContext>([
-			this.chatScenes.welcomeScene,
-			this.chatScenes.menuScene,
-		]);
+		this.stage = new Scenes.Stage<MyContext>([this.welcomeScene.scene, this.menuScene.scene]);
 		this.bot.use(this.stage.middleware());
 
 		this.bot.command('start', (ctx) => {
-			ctx.scene.enter(ScenesEnum.WELCOME);
+			ctx.scene.enter(ScenesNames.WELCOME);
 		});
 		this.bot.command('menu', (ctx) => {
-			ctx.scene.enter(ScenesEnum.MENU);
+			ctx.scene.enter(ScenesNames.MENU);
 		});
 	}
 	init(): void {
