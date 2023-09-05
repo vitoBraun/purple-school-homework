@@ -28,7 +28,6 @@ import { ItemsService } from './items/items.service';
 import { IItemsRepository } from './items/types/items.repository.interface';
 import { TelegramBotService } from './telegram-bot/telegram-bot.service';
 import { ITelegramBotService } from './telegram-bot/types/telegram-bot.service.interface';
-// import e from 'express';
 import { MenuScene } from './telegram-bot/scenes/menu/menu.scene';
 import { IWelcomeScene, WelcomeScene } from './telegram-bot/scenes/welcome/welcome.scene';
 
