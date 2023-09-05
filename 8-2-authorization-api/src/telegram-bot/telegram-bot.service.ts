@@ -1,4 +1,3 @@
-import { ItemsRepository } from './../items/items.repository';
 import { LoggerService } from './../logger/logger.service';
 import { ConfigService } from './../config/config.service';
 import { Scenes, Telegraf } from 'telegraf';
@@ -9,6 +8,11 @@ import { MyContext } from './types/types';
 
 import { ITelegramBotService } from './types/telegram-bot.service.interface';
 import { ChatScenes } from './scenes/chat.scenes';
+
+export enum ScenesEnum {
+	WELCOME = 'welcome',
+	MENU = 'menu',
+}
 
 @injectable()
 export class TelegramBotService implements ITelegramBotService {
@@ -33,10 +37,10 @@ export class TelegramBotService implements ITelegramBotService {
 		this.bot.use(this.stage.middleware());
 
 		this.bot.command('start', (ctx) => {
-			ctx.scene.enter('welcome');
+			ctx.scene.enter(ScenesEnum.WELCOME);
 		});
 		this.bot.command('menu', (ctx) => {
-			ctx.scene.enter('menu');
+			ctx.scene.enter(ScenesEnum.MENU);
 		});
 	}
 	init(): void {

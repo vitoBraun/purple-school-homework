@@ -4,6 +4,7 @@ import { injectable, inject } from 'inversify';
 import { ItemsRepository } from './../../items/items.repository';
 
 import { TYPES } from '../../types/types';
+import { ScenesEnum } from '../telegram-bot.service';
 const { leave } = Scenes.Stage;
 
 @injectable()
@@ -11,8 +12,8 @@ export class ChatScenes {
 	welcomeScene;
 	menuScene;
 	constructor(@inject(TYPES.ItemsRepository) private ItemsRepository: ItemsRepository) {
-		this.welcomeScene = new Scenes.BaseScene<MyContext>('welcome');
-		this.menuScene = new Scenes.BaseScene<MyContext>('menu');
+		this.welcomeScene = new Scenes.BaseScene<MyContext>(ScenesEnum.WELCOME);
+		this.menuScene = new Scenes.BaseScene<MyContext>(ScenesEnum.MENU);
 
 		this.useWelcomeScene();
 		this.useMenuScene();
@@ -24,7 +25,7 @@ export class ChatScenes {
 		this.welcomeScene.command('back', leave<MyContext>());
 		this.welcomeScene.on('text', (ctx) => {
 			ctx.reply(`Ваш город: "${ctx.message.text}"`);
-			ctx.scene.enter('menu');
+			ctx.scene.enter(ScenesEnum.MENU);
 		});
 		this.welcomeScene.command('back', this.leaveSceneHandler);
 	}
