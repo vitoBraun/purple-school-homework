@@ -7,7 +7,6 @@ import LocalSession from 'telegraf-session-local';
 import { MyContext } from './types/types';
 
 import { ITelegramBotService } from './types/telegram-bot.service.interface';
-import { ChatScenes } from './scenes/chat.scenes';
 import { WelcomeScene } from './scenes/welcome/welcome.scene';
 import { MenuScene } from './scenes/menu/menu.scene';
 

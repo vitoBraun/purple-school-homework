@@ -1,3 +1,4 @@
+import { getMenuKeyboard } from './menu.keyboards';
 import { ScenesNames } from './../../telegram-bot.service';
 import { MyBaseScene } from '../mybase.scene';
 import { Markup, Scenes } from 'telegraf';
@@ -5,6 +6,7 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../../../types/types';
 import { ItemsRepository } from './../../../items/items.repository';
 import { MyContext } from '../../types/types';
+import { getItemTemplate } from './menu.templates';
 
 export interface IMenuScene {
 	useMenuScene: () => void;
@@ -26,17 +28,10 @@ export class MenuScene extends MyBaseScene implements IMenuScene {
 				description: item.description,
 				price: item.price,
 			}));
-			await ctx.reply(
-				'Меню:',
-				Markup.inlineKeyboard(
-					menu.map((item) => Markup.button.callback(item.name, item.callback_data)),
-				),
-			);
+			await ctx.reply('Меню:', getMenuKeyboard(menu));
 			menu.forEach((item) =>
 				this.scene.action(item.callback_data, (ctx) => {
-					ctx.reply(`Товар: ${item.name} 
-					Описание: ${item.description} 
-					Цена:  ${item.price}`);
+					ctx.reply(getItemTemplate(item));
 				}),
 			);
 		});
