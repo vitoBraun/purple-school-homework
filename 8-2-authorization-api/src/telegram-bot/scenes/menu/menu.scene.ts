@@ -1,18 +1,21 @@
 import { ScenesNames } from './../../telegram-bot.service';
 import { MyBaseScene } from '../mybase.scene';
-import { Markup } from 'telegraf';
+import { Markup, Scenes } from 'telegraf';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../../types/types';
 import { ItemsRepository } from './../../../items/items.repository';
+import { MyContext } from '../../types/types';
 
 export interface IMenuScene {
 	useMenuScene: () => void;
 }
 
 @injectable()
-export class MenuScene extends MyBaseScene {
+export class MenuScene extends MyBaseScene implements IMenuScene {
+	scene;
 	constructor(@inject(TYPES.ItemsRepository) private ItemsRepository: ItemsRepository) {
-		super(ScenesNames.MENU);
+		super();
+		this.scene = new Scenes.BaseScene<MyContext>(ScenesNames.MENU);
 	}
 	useMenuScene(): void {
 		this.scene.enter(async (ctx) => {

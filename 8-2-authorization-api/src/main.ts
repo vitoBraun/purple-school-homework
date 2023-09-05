@@ -54,7 +54,7 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
 	bind<IItemsService>(TYPES.ItemsService).to(ItemsService).inSingletonScope();
 	bind<ITelegramBotService>(TYPES.TelegramBotService).to(TelegramBotService).inSingletonScope();
 	bind<IWelcomeScene>(TYPES.WelcomeScene).to(WelcomeScene).inSingletonScope();
-	// bind<MenuScene>(TYPES.MenuScene).to(MenuScene).inSingletonScope();
+	bind<MenuScene>(TYPES.MenuScene).to(MenuScene).inSingletonScope();
 	bind<App>(TYPES.Application).to(App);
 });
 

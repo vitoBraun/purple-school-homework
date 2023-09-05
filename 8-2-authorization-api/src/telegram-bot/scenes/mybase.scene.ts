@@ -4,11 +4,7 @@ import { ScenesNames } from '../telegram-bot.service';
 import { injectable } from 'inversify';
 
 @injectable()
-export class MyBaseScene {
-	public scene;
-	constructor(private sceneName: ScenesNames) {
-		this.scene = new Scenes.BaseScene<MyContext>(this.sceneName);
-	}
+export abstract class MyBaseScene {
 	public leaveSceneHandler(ctx: MyContext): void {
 		ctx.reply('Назад');
 		ctx.scene.leave();

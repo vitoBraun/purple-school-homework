@@ -10,9 +10,11 @@ export interface IWelcomeScene {
 }
 
 @injectable()
-export class WelcomeScene extends MyBaseScene {
-	constructor(sceneName: ScenesNames) {
-		super(ScenesNames.WELCOME);
+export class WelcomeScene extends MyBaseScene implements IWelcomeScene {
+	scene;
+	constructor() {
+		super();
+		this.scene = new Scenes.BaseScene<MyContext>(ScenesNames.WELCOME);
 	}
 	useWelcomeScene(): void {
 		this.scene.enter((ctx) => {
