@@ -16,7 +16,7 @@ export const TYPES = {
 	QueryFormatter: Symbol.for('QueryFormatter'),
 	TelegramBotService: Symbol.for('TelegramBotService'),
 	WelcomeScene: Symbol.for('WelcomeScene'),
-	MenuScene: Symbol.for('MenuScene'),
+	// MenuScene: Symbol.for('MenuScene'),
 };
 
 export const statusNames = {

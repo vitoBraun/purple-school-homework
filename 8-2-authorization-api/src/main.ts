@@ -31,7 +31,7 @@ import { ITelegramBotService } from './telegram-bot/types/telegram-bot.service.i
 import { ChatScenes } from './telegram-bot/scenes/chat.scenes';
 import e from 'express';
 import { MenuScene } from './telegram-bot/scenes/menu/menu.scene';
-import { WelcomeScene } from './telegram-bot/scenes/welcome/welcome.scene';
+import { IWelcomeScene, WelcomeScene } from './telegram-bot/scenes/welcome/welcome.scene';
 
 export interface IBootsrapReturn {
 	appContainer: Container;
@@ -53,8 +53,8 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
 	bind<IItemsController>(TYPES.ItemsController).to(ItemsController).inSingletonScope();
 	bind<IItemsService>(TYPES.ItemsService).to(ItemsService).inSingletonScope();
 	bind<ITelegramBotService>(TYPES.TelegramBotService).to(TelegramBotService).inSingletonScope();
-	bind<WelcomeScene>(TYPES.WelcomeScene).to(WelcomeScene).inSingletonScope();
-	bind<MenuScene>(TYPES.MenuScene).to(MenuScene).inSingletonScope();
+	bind<IWelcomeScene>(TYPES.WelcomeScene).to(WelcomeScene).inSingletonScope();
+	// bind<MenuScene>(TYPES.MenuScene).to(MenuScene).inSingletonScope();
 	bind<App>(TYPES.Application).to(App);
 });
 

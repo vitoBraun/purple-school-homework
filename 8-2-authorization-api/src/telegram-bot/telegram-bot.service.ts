@@ -25,15 +25,14 @@ export class TelegramBotService implements ITelegramBotService {
 	constructor(
 		@inject(TYPES.ConfigService) private configService: ConfigService,
 		@inject(TYPES.ILogger) private loggerService: LoggerService,
-		@inject(TYPES.WelcomeScene) private welcomeScene: WelcomeScene,
-		@inject(TYPES.MenuScene) private menuScene: MenuScene,
+		@inject(TYPES.WelcomeScene) private welcomeScene: WelcomeScene, // @inject(TYPES.MenuScene) private menuScene: MenuScene,
 	) {
 		this.token = this.configService.get('TOKEN');
 
 		this.bot = new Telegraf<MyContext>(this.token);
 		this.bot.use(new LocalSession({ database: 'session.json' }).middleware());
 
-		this.stage = new Scenes.Stage<MyContext>([this.welcomeScene.scene, this.menuScene.scene]);
+		this.stage = new Scenes.Stage<MyContext>([]);
 		this.bot.use(this.stage.middleware());
 
 		this.bot.command('start', (ctx) => {

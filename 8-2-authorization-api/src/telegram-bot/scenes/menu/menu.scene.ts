@@ -5,6 +5,10 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../../../types/types';
 import { ItemsRepository } from './../../../items/items.repository';
 
+export interface IMenuScene {
+	useMenuScene: () => void;
+}
+
 @injectable()
 export class MenuScene extends MyBaseScene {
 	constructor(@inject(TYPES.ItemsRepository) private ItemsRepository: ItemsRepository) {

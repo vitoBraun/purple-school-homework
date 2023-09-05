@@ -5,6 +5,10 @@ import { Scenes } from 'telegraf';
 import { injectable } from 'inversify';
 const { leave } = Scenes.Stage;
 
+export interface IWelcomeScene {
+	useWelcomeScene: () => void;
+}
+
 @injectable()
 export class WelcomeScene extends MyBaseScene {
 	constructor(sceneName: ScenesNames) {
