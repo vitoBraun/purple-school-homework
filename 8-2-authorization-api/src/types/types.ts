@@ -15,6 +15,8 @@ export const TYPES = {
 	ItemsController: Symbol.for('ItemsController'),
 	QueryFormatter: Symbol.for('QueryFormatter'),
 	TelegramBotService: Symbol.for('TelegramBotService'),
+	WelcomeScene: Symbol.for('WelcomeScene'),
+	MenuScene: Symbol.for('MenuScene'),
 };
 
 export const statusNames = {
