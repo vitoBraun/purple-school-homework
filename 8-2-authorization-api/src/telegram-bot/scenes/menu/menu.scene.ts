@@ -1,4 +1,4 @@
-import { getMenuKeyboard } from './menu.keyboards';
+import { addToCartButton, getMenuKeyboard } from './menu.keyboards';
 import { ScenesNames } from './../../telegram-bot.service';
 import { MyBaseScene } from '../mybase.scene';
 import { Markup, Scenes } from 'telegraf';
@@ -30,11 +30,14 @@ export class MenuScene extends MyBaseScene implements IMenuScene {
 				price: item.price,
 			}));
 			await ctx.reply('Меню:', getMenuKeyboard(menu));
-			menu.forEach((item) =>
+			menu.forEach((item) => {
 				this.scene.action(item.callback_data, (ctx) => {
-					ctx.reply(getItemTemplate(item));
-				}),
-			);
+					ctx.reply(getItemTemplate(item), addToCartButton(item));
+				});
+				this.scene.action(`toCart${item.callback_data}`, (ctx) => {
+					ctx.reply(`Товар ${item.name} добавлен в корзину`);
+				});
+			});
 		});
 		this.scene.command('back', this.leaveSceneHandler);
 	}
