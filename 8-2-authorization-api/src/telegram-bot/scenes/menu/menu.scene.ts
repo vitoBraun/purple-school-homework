@@ -18,6 +18,7 @@ export class MenuScene extends MyBaseScene implements IMenuScene {
 	constructor(@inject(TYPES.ItemsRepository) private ItemsRepository: ItemsRepository) {
 		super();
 		this.scene = new Scenes.BaseScene<MyContext>(ScenesNames.MENU);
+		this.useMenuScene();
 	}
 	useMenuScene(): void {
 		this.scene.enter(async (ctx) => {

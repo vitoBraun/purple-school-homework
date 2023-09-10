@@ -15,6 +15,7 @@ export class WelcomeScene extends MyBaseScene implements IWelcomeScene {
 	constructor() {
 		super();
 		this.scene = new Scenes.BaseScene<MyContext>(ScenesNames.WELCOME);
+		this.useWelcomeScene();
 	}
 	useWelcomeScene(): void {
 		this.scene.enter((ctx) => {
