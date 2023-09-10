@@ -10,14 +10,10 @@ import { AuthGuard } from '../common/auth.guard';
 import { EditPromoDto } from './dto/promotion.dto';
 import { IPromoService } from './types/promotions.service.interface';
 import { HttpError } from '../errors/http-error.class';
-import { UserService } from '../users/users.sevice';
 
 @injectable()
 export class PromoController extends BaseController implements IPromoController {
-	constructor(
-		@inject(TYPES.PromoService) private promoService: IPromoService,
-		@inject(TYPES.UserService) private userService: UserService,
-	) {
+	constructor(@inject(TYPES.PromoService) private promoService: IPromoService) {
 		super();
 		this.bindRoutes([
 			{

@@ -32,7 +32,7 @@ export class TelegramBotService implements ITelegramBotService {
 		this.bot = new Telegraf<MyContext>(this.token);
 		this.bot.use(new LocalSession({ database: 'session.json' }).middleware());
 
-		this.stage = new Scenes.Stage<MyContext>([this.welcomeScene.scene]);
+		this.stage = new Scenes.Stage<MyContext>([this.welcomeScene.scene, this.menuScene.scene]);
 		this.bot.use(this.stage.middleware());
 
 		this.bot.command('start', (ctx) => {
