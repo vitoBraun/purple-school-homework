@@ -1,4 +1,4 @@
-import { CategoryModel, ItemModel } from '@prisma/client';
+import { CategoryModel, ItemModel, CartItemModel } from '@prisma/client';
 import { CreateItemDto, EditItemDto } from '../dto/create-Item.dto';
 import { ItemsWithCategories } from './types';
 
@@ -8,4 +8,5 @@ export interface IItemsRepository {
 	getCategories: () => Promise<CategoryModel[] | []>;
 	getItems: () => Promise<ItemsWithCategories[] | []>;
 	editItem: (item: EditItemDto) => Promise<ItemModel>;
+	addCartItem: (item: { itemId: number; userId: number }) => Promise<CartItemModel>;
 }

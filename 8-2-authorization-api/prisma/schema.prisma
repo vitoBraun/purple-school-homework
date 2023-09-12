@@ -34,10 +34,18 @@ model ItemModel {
   price       Int
   storeCount  Int             @default(0)
   categories  CategoryModel[]
+  cartItems   CartItemModel[]
 }
 
 model CategoryModel {
   id    Int         @id @default(autoincrement())
   name  String
   items ItemModel[]
+}
+
+model CartItemModel {
+  id     Int       @id @default(autoincrement())
+  userId Int       @unique
+  itemId Int
+  item   ItemModel @relation(fields: [itemId], references: [id])
 }

@@ -9,6 +9,7 @@ export interface MySession extends Scenes.SceneSession<MySessionScene> {
 
 export interface MyContext extends Context {
 	props: string;
+	cart: Record<string, any>;
 	session: MySession;
 	scene: Scenes.SceneContextScene<MyContext, MySessionScene>;
 }

@@ -24,6 +24,7 @@ export class MenuScene extends MyBaseScene implements IMenuScene {
 		this.scene.enter(async (ctx) => {
 			const items = await this.ItemsRepository.getItems();
 			const menu = items.map((item) => ({
+				id: item.id,
 				name: item.name,
 				callback_data: item.id.toString(),
 				description: item.description,
@@ -35,8 +36,17 @@ export class MenuScene extends MyBaseScene implements IMenuScene {
 					ctx.reply(getItemTemplate(item), addToCartButton(item));
 				});
 				this.scene.action(`toCart${item.callback_data}`, (ctx) => {
+					if (ctx.from?.id) {
+						this.ItemsRepository.addCartItem({ userId: ctx.from?.id, itemId: item.id });
+					} else {
+						throw new Error('User id is undefined');
+					}
+
 					ctx.reply(`Товар ${item.name} добавлен в корзину`);
 				});
+			});
+			this.scene.command('cart', (ctx) => {
+				ctx.reply(`${ctx.cart}`);
 			});
 		});
 		this.scene.command('back', this.leaveSceneHandler);

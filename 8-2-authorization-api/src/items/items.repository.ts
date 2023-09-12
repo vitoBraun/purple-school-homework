@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { IItemsRepository } from './types/items.repository.interface';
 
-import { CategoryModel, ItemModel } from '@prisma/client';
+import { CartItemModel, CategoryModel, ItemModel } from '@prisma/client';
 
 import { TYPES } from '../types/types';
 import { PrismaService } from '../database/prisma.service';
@@ -70,5 +70,15 @@ export class ItemsRepository implements IItemsRepository {
 				categories: true,
 			},
 		});
+	}
+
+	async addCartItem({
+		userId,
+		itemId,
+	}: {
+		userId: number;
+		itemId: number;
+	}): Promise<CartItemModel> {
+		return this.prismaService.client.cartItemModel.create({ data: { userId, itemId } });
 	}
 }
