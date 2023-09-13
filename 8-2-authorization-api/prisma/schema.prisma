@@ -45,7 +45,7 @@ model CategoryModel {
 
 model CartItemModel {
   id     Int       @id @default(autoincrement())
-  userId Int       @unique
+  userId Int
   itemId Int
   item   ItemModel @relation(fields: [itemId], references: [id])
 }

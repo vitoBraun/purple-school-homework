@@ -33,6 +33,9 @@ export class App {
 		@inject(TYPES.ItemsController) private itemsController: ItemsController,
 	) {
 		this.app = express();
+		this.app.use('/check', (req, res) => {
+			res.send('Hello World!');
+		});
 		this.app.use(bodyParser.urlencoded({ extended: false }));
 		this.app.use(bodyParser.json());
 		this.app.use(
